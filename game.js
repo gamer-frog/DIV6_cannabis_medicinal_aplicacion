@@ -41,6 +41,16 @@
       request.onerror = () => reject(request.error || new Error('No se pudo leer el PDF'));
     });
   }
+  async function clearPdfStore() {
+    const db = await openPdfStore();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('pdfs', 'readwrite');
+      tx.objectStore('pdfs').clear();
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error || new Error('No se pudieron borrar los PDFs anteriores'));
+      tx.onabort = () => reject(tx.error || new Error('No se pudieron borrar los PDFs anteriores'));
+    });
+  }
 
   async function pdfToMarkdown(file, title, onProgress) {
     if (!window.pdfjsLib || !file) return { md: '', pages: 0, chars: 0, headings: [], topics: [], failed: true, reason: 'pdf.js no cargado', meta: {} };
@@ -140,26 +150,135 @@
     selectedResource: null, queries: 0, chat: [], chatSources: [], dupOnly: false,
     journalWeek: null, journalTasks: {}, selectedStrain: null, grows: [],
     libMode: 'digest', batch: null, roadmapStream: 'all', roadmapPending: false, roadmapHorizon: 'all', roadmapQuery: '',
-    sideCollapsed: false, sim: null, simSeries: { growth: true, health: true, moisture: true, nutrition: true, yield: true },
+    sideCollapsed: false, sim: null, savedSimConfigs: [], simSeries: { growth: true, health: true, moisture: true, nutrition: true, yield: true },
     annotations: {}, readingPaths: []
   });
 
   let game, app;
+  let storageLoadFailed = false;
   try {
     const saved = JSON.parse(localStorage.getItem('verde-app-v2') || 'null');
     game = saved && saved.game && Array.isArray(saved.game.plants) ? saved.game : initialGame();
     app = Object.assign(defaultApp(), saved ? saved.app : {});
+    app.savedSimConfigs = window.VerdeScenarios.normalizeScenarios(app.savedSimConfigs);
     app.budget = Object.assign(initialBudget(), app.budget || {});
     app.userResources = Array.isArray(app.userResources) ? app.userResources : [];
     app.journalTasks = app.journalTasks || {};
     app.grows = Array.isArray(app.grows) ? app.grows : [];
     app.annotations = app.annotations || {};
     app.readingPaths = Array.isArray(app.readingPaths) ? app.readingPaths : [];
-  } catch { game = initialGame(); app = defaultApp(); }
+  } catch (error) {
+    game = initialGame(); app = defaultApp(); storageLoadFailed = true;
+    console.error('Verde: no se pudieron leer los datos locales.', error);
+  }
 
+  let storageWarningShown = false;
   const persist = () => {
-    try { localStorage.setItem('verde-app-v2', JSON.stringify({ game, app })); } catch {}
+    if (storageLoadFailed) {
+      const status = $('#storageStatus');
+      if (status) {
+        status.textContent = 'Se protegieron los datos guardados porque no pudieron leerse. No se sobrescribirán hasta que restaures un respaldo válido.';
+        status.hidden = false;
+      }
+      return false;
+    }
+    try {
+      localStorage.setItem('verde-app-v2', JSON.stringify({ game, app }));
+      const status = $('#storageStatus');
+      if (status) { status.hidden = true; status.textContent = ''; }
+      storageWarningShown = false;
+      return true;
+    } catch (error) {
+      const status = $('#storageStatus');
+      const message = 'No se pudieron guardar los cambios en este navegador. Exportá un respaldo y liberá espacio.';
+      if (status) { status.textContent = message; status.hidden = false; }
+      if (!storageWarningShown) showToast(message);
+      storageWarningShown = true;
+      console.error('Verde: falló el guardado local.', error);
+      return false;
+    }
   };
+
+  function exportBackup() {
+    try {
+      const backup = window.VerdeBackup.createBackup(game, app);
+      const text = JSON.stringify(backup, null, 2);
+      const blob = new Blob([text], { type: 'application/json' });
+      if (blob.size > window.VerdeBackup.MAX_FILE_BYTES) throw new Error('El respaldo supera el límite de 50 MB.');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `verde-respaldo-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast('Respaldo descargado. Los PDFs originales no están incluidos.');
+    } catch (error) {
+      showToast(error.message || 'No se pudo crear el respaldo.');
+    }
+  }
+
+  async function importBackup(file) {
+    if (!file) return;
+    if (file.size > window.VerdeBackup.MAX_FILE_BYTES) {
+      showToast('El archivo supera el tamaño máximo de 50 MB.');
+      return;
+    }
+    try {
+      const imported = window.VerdeBackup.parseBackup(await file.text());
+      if (!window.confirm('Restaurar este respaldo reemplazará la partida y los datos actuales de Verde. La operación no se puede deshacer desde la app. ¿Continuar?')) return;
+      const previous = { game, app, storageLoadFailed };
+      const nextGame = imported.game;
+      const nextApp = Object.assign(defaultApp(), imported.app);
+      nextApp.savedSimConfigs = window.VerdeScenarios.normalizeScenarios(nextApp.savedSimConfigs);
+      nextApp.budget = Object.assign(initialBudget(), nextApp.budget || {});
+      nextApp.userResources = nextApp.userResources.map(resource => ({ ...resource, pdfData: undefined, pdfStored: false }));
+      nextApp.chat = (Array.isArray(nextApp.chat) ? nextApp.chat : []).slice(-200).map(message => ({
+        role: message?.role === 'user' ? 'user' : 'assistant',
+        html: esc(String(message?.html ?? '').replace(/<[^>]*>/g, ' ').slice(0, 10000))
+      }));
+      nextApp.journalTasks = nextApp.journalTasks || {};
+      nextApp.grows = Array.isArray(nextApp.grows) ? nextApp.grows : [];
+      const annotations = nextApp.annotations && typeof nextApp.annotations === 'object' && !Array.isArray(nextApp.annotations)
+        ? nextApp.annotations : {};
+      nextApp.annotations = Object.fromEntries(Object.entries(annotations).map(([id, entries]) => [
+        id,
+        Array.isArray(entries) ? entries.slice(0, 500).filter(entry => entry && typeof entry === 'object').map(entry => ({
+          text: typeof entry.text === 'string' ? entry.text.slice(0, 5000) : '',
+          at: typeof entry.at === 'string' ? entry.at.slice(0, 200) : ''
+        })) : []
+      ]));
+      nextApp.readingPaths = Array.isArray(nextApp.readingPaths) ? nextApp.readingPaths : [];
+      game = nextGame;
+      app = nextApp;
+      storageLoadFailed = false;
+      if (!persist()) {
+        game = previous.game;
+        app = previous.app;
+        storageLoadFailed = previous.storageLoadFailed;
+        showToast('No se pudo guardar la restauración. Se conservaron los datos que estaban cargados.');
+        return;
+      }
+      let pdfCleanupFailed = false;
+      try { await clearPdfStore(); }
+      catch (error) {
+        pdfCleanupFailed = true;
+        console.error('Verde: no se pudieron borrar los PDFs anteriores al restaurar.', error);
+      }
+      renderNav(); renderPanel(); renderStrains(); renderJournal(); renderSim(); renderLibrary();
+      renderChat(); renderBudget(); renderProcess(); renderRoadmap();
+      const target = VIEWS[app.view] ? app.view : 'panel';
+      navigate(target);
+      closeModal('backupModal');
+      showToast(pdfCleanupFailed
+        ? 'Respaldo restaurado. Volvé a añadir los PDFs; no se pudieron borrar los anteriores del almacenamiento local.'
+        : 'Respaldo restaurado. Los PDFs deben volver a añadirse.');
+    } catch (error) {
+      showToast(error.message || 'No se pudo restaurar el respaldo.');
+    } finally {
+      const input = $('#backupFileInput');
+      if (input) input.value = '';
+    }
+  }
 
   /* ---------- derived data ---------- */
   const allResources = () => [...app.userResources, ...window.LIBRARY];
@@ -806,6 +925,23 @@
     strategy: simStrategyId
   });
 
+  function renderSavedSimConfigs() {
+    app.savedSimConfigs = window.VerdeScenarios.normalizeScenarios(app.savedSimConfigs);
+    const select = $('#simScenarioSelect');
+    const count = $('#simScenarioCount');
+    if (!select) return;
+    const selected = select.value;
+    select.innerHTML = '<option value="">Elegí un escenario</option>' + app.savedSimConfigs
+      .map(item => `<option value="${esc(item.name)}">${esc(item.name)}</option>`).join('');
+    if (app.savedSimConfigs.some(item => item.name === selected)) select.value = selected;
+    if (count) count.textContent = `${app.savedSimConfigs.length}/${window.VerdeScenarios.MAX_SCENARIOS}`;
+    const hasSelection = app.savedSimConfigs.some(item => item.name === select.value);
+    $('#simScenarioApply').disabled = !hasSelection;
+    $('#simScenarioDelete').disabled = !hasSelection;
+    $('#simScenarioSave').disabled = app.savedSimConfigs.length >= window.VerdeScenarios.MAX_SCENARIOS &&
+      !app.savedSimConfigs.some(item => item.name.toLocaleLowerCase('es') === ($('#simScenarioName')?.value || '').trim().toLocaleLowerCase('es'));
+  }
+
   function renderSimConfig() {
     const sel = $('#simStrain');
     if (!sel) return;
@@ -814,9 +950,10 @@
       return ca - cb || a.name.localeCompare(b.name, 'es');
     });
     const current = app.sim?.strainId || sel.value || ordered[0].id;
-    sel.innerHTML = ordered.map(st => `<option value="${st.id}">${esc(st.name)} · ${esc(CAT_LABEL[strainCategory(st)])} · ${st.flower}d · ${st.yield}g/planta</option>`).join('');
+    sel.innerHTML = ordered.map(st => `<option value="${esc(st.id)}">${esc(st.name)} · ${esc(CAT_LABEL[strainCategory(st)])} · ${st.flower}d · ${st.yield}g/planta</option>`).join('');
     sel.value = current;
     const st = window.STRAINS.find(x => x.id === sel.value) || ordered[0];
+    if (st && sel.value !== st.id) sel.value = st.id;
     const meta = $('#simStrainMeta');
     if (meta && st) meta.textContent = `${CAT_LABEL[strainCategory(st)]} · ${st.flower} días de floración · ${st.yield} g/planta · ${st.thc}% THC · fuente: ${st.source || 'StrainAPI V1'}`;
 
@@ -828,9 +965,12 @@
         </button>`).join('');
       $$('#simStrategyRow [data-strategy]').forEach(b => b.addEventListener('click', () => {
         simStrategyId = b.dataset.strategy;
+        app.sim = simConfigFromUI();
+        persist();
         renderSimConfig();
       }));
     }
+    renderSavedSimConfigs();
     const grades = $('#simGrades');
     if (grades && !grades.dataset.bound) {
       grades.dataset.bound = '1';
@@ -840,68 +980,12 @@
   }
 
   function simulateFull(cfg, seedOffset = 0) {
-    const st = window.STRAINS.find(x => x.id === cfg.strainId) || window.STRAINS[0];
-    const strat = BATCH_STRATEGIES.find(s => s.id === cfg.strategy) || BATCH_STRATEGIES[0];
-    const days = cfg.days;
-    const baseYieldPerPlant = st.yield || 85;
-    const cycleFactor = Math.max(.7, Math.min(1.15, cfg.days / (st.flower + 5)));
-    const lightFactor = Math.max(.78, Math.min(1.12, cfg.light / 18));
-    const tempPenalty = Math.max(0, Math.abs(cfg.temp - 24) - 2) * 1.1;
-    const rand = seededRandom((cfg.strainId.charCodeAt(0) || 7) * 131 + days * 17 + cfg.plants * 911 + (cfg.strategy === 'balanced' ? 7 : cfg.strategy.length * 31) + seedOffset);
-    const growth = [], healthS = [], moistureS = [], nutritionS = [], yieldS = [];
-    let health = 92, moisture = 58, nutrition = 55, stressDays = 0;
-    for (let d = 1; d <= days; d++) {
-      const phaseT = d / days;
-      const logistic = 100 / (1 + Math.exp(-(d - days * 0.52) / (days * 0.16)));
-      growth.push(Math.round(Math.min(100, Math.max(4, logistic + (rand() - .5) * 3))));
-      moisture = Math.max(18, Math.min(88, moisture - 11 + rand() * 5 + (strat.waterAt > 30 ? 4 : 0)));
-      if (moisture < strat.waterAt) moisture = Math.min(88, moisture + 34);
-      nutrition = Math.max(15, Math.min(90, nutrition - 2.1 + rand() * 2 + (strat.feedAt > 30 ? 3 : 0)));
-      if (nutrition < strat.feedAt) nutrition = Math.min(90, nutrition + 30);
-      let stress = 0;
-      if (moisture < 22 || moisture > 84) stress += 5;
-      if (nutrition < 18) stress += 4;
-      if (tempPenalty > 2) stress += Math.min(4, tempPenalty / 2);
-      // Variación sintética entre corridas para enseñar sensibilidad; no es una tasa empírica.
-      if (rand() < 0.08) stress += 3 + rand() * 5;
-      if (strat.stress && d % (strat.stressEvery || 3) === 0) stress += strat.stress;
-      health = Math.max(15, Math.min(99, health + (stress ? -stress : 0.55)));
-      if (stress) stressDays++;
-      if (d % 7 === 0 && health < 55) stressDays++;
-      healthS.push(Math.round(health));
-      moistureS.push(Math.round(moisture));
-      nutritionS.push(Math.round(nutrition));
-      const frac = Math.max(0, Math.min(1, (d - 1) / Math.max(1, days - 1)));
-      yieldS.push(Math.round(baseYieldPerPlant * cfg.plants * cycleFactor * lightFactor * (health / 92) * Math.pow(frac, 1.6)));
-    }
-    const yieldG = yieldS[yieldS.length - 1] || 0;
-    const potential = Math.round(baseYieldPerPlant * cfg.plants * cycleFactor * lightFactor);
-    const yieldScore = potential ? Math.min(100, Math.round(yieldG / potential * 100)) : 0;
-    const avgHealth = Math.round(healthS.reduce((a, b) => a + b, 0) / healthS.length);
-    const healthScore = Math.max(0, Math.min(100, Math.round(avgHealth)));
-    const stability = Math.max(0, Math.min(100, 100 - stressDays * 2.2 - tempPenalty * 3));
-    const spentDaily = 4500 * (cfg.light / 18) + (strat.premium > 0 ? 1600 : strat.premium < 0 ? -250 : 650);
-    const spent = Math.round(spentDaily * days + cfg.plants * 1200);
-    const perGram = yieldG ? Math.round(spent / yieldG) : spent;
-    const costScore = Math.max(0, Math.min(100, Math.round((2200 - perGram) / 16)));
-    const score = Math.max(0, Math.min(100, Math.round(yieldScore * .4 + costScore * .2 + healthScore * .25 + stability * .15)));
-    const grade = gradeFor(score);
-    const activities = [
-      { day: 1, phase: 'Siembra', title: 'Germinación y siembra', detail: `Hidratar sustrato, ${cfg.light} h luz, ${cfg.temp} °C media.`, done: true },
-      { day: 3, phase: 'Plántula', title: 'Primer riego medido', detail: 'Riego por peso de maceta; evitar encharcar.', done: strat.waterAt >= 24 },
-      { day: 12, phase: 'Crecimiento', title: 'Raíces y estructura', detail: 'Media dosis NPK; revisar distancia y PPFD.', done: true },
-      { day: 18, phase: 'Crecimiento', title: 'Primer LST', detail: 'Apertura suave de canopia; registrar respuesta a 48 h.', done: strat.id !== 'minimal' },
-      { day: 27, phase: 'Prefloración', title: 'Cambio a fórmula floración', detail: 'Bajar humedad hacia 58%; ajustar P/K.', done: true },
-      { day: 37, phase: 'Floración', title: 'Floración y ventilación', detail: 'Rutina de ventilación y prevención de botritis.', done: !!strat.vent },
-      { day: 44, phase: 'Floración', title: 'Defoliación selectiva', detail: 'Solo hojas que bloquean luz.', done: strat.id === 'intensive' },
-      { day: 52, phase: 'Floración', title: 'Pico de demanda hídrica', detail: 'Consumo máximo; reponer reserva a tiempo.', done: strat.waterAt >= 22 },
-      { day: 57, phase: 'Maduración', title: 'Tricomas y reducción', detail: 'Bajar riego y nutrición; preparar secado.', done: true },
-      { day: 63, phase: 'Maduración', title: 'Control de botritis', detail: 'Revisar cogollos internos; subir ventilación.', done: !!strat.vent },
-      { day: Math.min(days, Math.round(days * 0.9)), phase: 'Cosecha', title: `Corte · ${fmt(yieldG)} g`, detail: `${cfg.plants} plantas · ${fmt(perGram)} $/g · ${grade.label} (${score} pts).`, done: true },
-      { day: days, phase: 'Curado', title: 'Secado y curado', detail: 'Secado lento 7–10 días; curado con aireación diaria.', done: true }
-    ].filter(a => a.day <= days).sort((a, b) => a.day - b.day);
-    const yieldPct = yieldS.map(v => potential ? Math.round(v / potential * 100) : 0);
-    return { cfg, strain: st, strategy: strat, days, growth, health: healthS, moisture: moistureS, nutrition: nutritionS, yield: yieldS, yieldPct, yieldG, potential, spent, perGram, score, grade, activities, stressDays, stability };
+    return window.VerdeSimulator.simulateFull(cfg, {
+      strains: window.STRAINS,
+      strategies: BATCH_STRATEGIES,
+      grades: SIM_GRADES,
+      seedOffset
+    });
   }
 
   const SIM_SERIES = [
@@ -1118,8 +1202,14 @@
         (action === 'harvest' && (!selected.alive || selected.age < 67));
     });
 
-    $('#logCount').textContent = String(game.logs.length).padStart(2, '0');
-    $('#logList').innerHTML = game.logs.slice(0, 4).map(x => `<div class="log-item"><span class="log-mark ${x.kind}"></span><span class="log-time">D${String(x.day).padStart(2, '0')}</span><span class="log-text">${x.text}</span></div>`).join('');
+    const logs = Array.isArray(game.logs) ? game.logs : [];
+    $('#logCount').textContent = String(logs.length).padStart(2, '0');
+    $('#logList').innerHTML = logs.slice(0, 4).map(x => {
+      const entry = x && typeof x === 'object' ? x : {};
+      const kind = ['success', 'warning'].includes(entry.kind) ? entry.kind : '';
+      const day = Number.isFinite(Number(entry.day)) ? Math.max(0, Math.floor(Number(entry.day))) : 0;
+      return `<div class="log-item"><span class="log-mark ${kind}"></span><span class="log-time">D${String(day).padStart(2, '0')}</span><span class="log-text">${window.VerdeBackup.safeLogMarkup(entry.text)}</span></div>`;
+    }).join('');
     $('#tipText').textContent = !selected.alive ? 'Elegí una planta activa para continuar con los cuidados.'
       : selected.moisture < 30 ? 'El sustrato está seco. Una pequeña cantidad de agua puede ayudar.'
       : selected.moisture > 78 ? 'El sustrato sigue húmedo; esperá antes de volver a regar.'
@@ -1851,7 +1941,7 @@
     const pathsEl = $('#readingPaths');
     if (pathsEl) {
       const paths = app.readingPaths || [];
-      pathsEl.innerHTML = paths.length ? `<span class="section-kicker">RUTAS DE LECTURA GUARDADAS</span>` + paths.map(p => `<div class="reading-path-row"><b>${esc(p.tag)}</b><small>${p.ids.length} recursos · ${esc(p.at)}</small><button data-path="${p.id}">Exportar <span>↓</span></button></div>`).join('') : '';
+      pathsEl.innerHTML = paths.length ? `<span class="section-kicker">RUTAS DE LECTURA GUARDADAS</span>` + paths.map(p => `<div class="reading-path-row"><b>${esc(p.tag)}</b><small>${p.ids.length} recursos · ${esc(p.at)}</small><button data-path="${esc(p.id)}">Exportar <span>↓</span></button></div>`).join('') : '';
       $$('#readingPaths [data-path]').forEach(b => b.addEventListener('click', () => {
         const path = (app.readingPaths || []).find(x => String(x.id) === b.dataset.path);
         if (path) exportReadingPath(path);
@@ -1894,9 +1984,9 @@
   function openAnnotate(id) {
     const r = allResources().find(x => x.id === id);
     if (!r) return;
-    const list = app.annotations[id] || [];
+    const list = Array.isArray(app.annotations?.[id]) ? app.annotations[id] : [];
     const box = $('#annotateList');
-    if (box) box.innerHTML = list.length ? list.map((n, i) => `<div class="annotate-item"><span>${esc(n.text)}</span><small>${n.at}</small><button data-del="${i}" aria-label="Borrar">×</button></div>`).join('') : '<p class="annotate-empty">Sin anotaciones todavía.</p>';
+    if (box) box.innerHTML = list.length ? list.map((n, i) => `<div class="annotate-item"><span>${esc(n?.text ?? '')}</span><small>${esc(n?.at ?? '')}</small><button data-del="${i}" aria-label="Borrar">×</button></div>`).join('') : '<p class="annotate-empty">Sin anotaciones todavía.</p>';
     $('#annotateModal')?.classList.add('open');
     $$('#annotateList [data-del]').forEach(b => b.addEventListener('click', () => {
       app.annotations[id].splice(Number(b.dataset.del), 1);
@@ -2859,6 +2949,10 @@
     $$('.modal-backdrop').forEach(bd => {
       bd.addEventListener('click', (e) => { if (e.target === bd) bd.classList.remove('open'); });
     });
+    $('#backupOpenBtn')?.addEventListener('click', () => $('#backupModal')?.classList.add('open'));
+    $('#backupExportBtn')?.addEventListener('click', exportBackup);
+    $('#backupImportBtn')?.addEventListener('click', () => $('#backupFileInput')?.click());
+    $('#backupFileInput')?.addEventListener('change', event => importBackup(event.target.files?.[0]));
     $('#globalSearchBtn')?.addEventListener('click', openCommandPalette);
     $('#commandInput')?.addEventListener('input', renderCommandResults);
     $('#commandInput')?.addEventListener('keydown', (e) => {
@@ -2895,9 +2989,45 @@
       $('#simConfig')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       $('#simStrain')?.focus();
     });
-    $('#simStrain')?.addEventListener('change', () => { renderSimConfig(); });
+    $('#simStrain')?.addEventListener('change', () => { app.sim = simConfigFromUI(); persist(); renderSimConfig(); });
     ['simPlants', 'simDays', 'simLight', 'simTemp'].forEach(id => {
       $('#' + id)?.addEventListener('change', () => { app.sim = simConfigFromUI(); persist(); });
+    });
+    $('#simScenarioSelect')?.addEventListener('change', renderSavedSimConfigs);
+    $('#simScenarioName')?.addEventListener('input', renderSavedSimConfigs);
+    $('#simScenarioSave')?.addEventListener('click', () => {
+      const result = window.VerdeScenarios.saveScenario(app.savedSimConfigs, $('#simScenarioName')?.value, simConfigFromUI());
+      if (result.error) { showToast(result.error); return; }
+      app.savedSimConfigs = result.scenarios;
+      app.sim = simConfigFromUI();
+      persist();
+      renderSavedSimConfigs();
+      $('#simScenarioSelect').value = result.saved.name;
+      renderSavedSimConfigs();
+      showToast(`Escenario “${result.saved.name}” guardado.`);
+    });
+    $('#simScenarioApply')?.addEventListener('click', () => {
+      const selected = app.savedSimConfigs.find(item => item.name === $('#simScenarioSelect')?.value);
+      if (!selected) return;
+      const config = window.VerdeScenarios.normalizeConfig(selected.config);
+      simStrategyId = config.strategy;
+      $('#simStrain').value = config.strainId;
+      $('#simPlants').value = String(config.plants);
+      $('#simDays').value = String(config.days);
+      $('#simLight').value = String(config.light);
+      $('#simTemp').value = String(config.temp);
+      app.sim = simConfigFromUI();
+      persist();
+      renderSimConfig();
+      showToast(`Escenario “${selected.name}” aplicado.`);
+    });
+    $('#simScenarioDelete')?.addEventListener('click', () => {
+      const name = $('#simScenarioSelect')?.value;
+      if (!name || !window.confirm(`¿Eliminar el escenario “${name}”?`)) return;
+      app.savedSimConfigs = window.VerdeScenarios.removeScenario(app.savedSimConfigs, name);
+      persist();
+      renderSavedSimConfigs();
+      showToast(`Escenario “${name}” eliminado.`);
     });
     $('#quickSimBtn')?.addEventListener('click', () => $('#quickModal').classList.add('open'));
     $('#batchRunBtn')?.addEventListener('click', runBatchBenchmark);
@@ -2986,6 +3116,13 @@
     renderProcess();
     renderRoadmap();
     navigate(target);
+    if (storageLoadFailed) {
+      const status = $('#storageStatus');
+      if (status) {
+        status.textContent = 'No se pudieron leer los datos guardados. Se inició una partida nueva; antes de continuar, intentá restaurar un respaldo si tenés uno.';
+        status.hidden = false;
+      }
+    }
   }
 
   init();

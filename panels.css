@@ -255,6 +255,10 @@
 .source-teaser p{font-size:9px;line-height:1.55;color:#8b947d;margin:0 0 8px}
 
 /* ============ MODALES ============ */
+.storage-status{position:sticky;top:72px;z-index:4;padding:10px 24px;background:#4a251b;color:#ffe0d2;border-bottom:1px solid #9a5138;font-size:12px;line-height:1.5}
+.storage-status[hidden]{display:none}
+.backup-actions{display:grid;gap:10px;margin-top:18px}
+.backup-modal .quick-note{align-items:flex-start}
 .toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,20px);padding:11px 18px;border-radius:999px;background:var(--lime);color:#121708;font:600 11px var(--sans);opacity:0;pointer-events:none;transition:.25s;box-shadow:0 14px 40px rgba(0,0,0,.5);z-index:60;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .modal-backdrop{position:fixed;inset:0;background:rgba(4,6,3,.74);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;backdrop-filter:blur(6px)}
