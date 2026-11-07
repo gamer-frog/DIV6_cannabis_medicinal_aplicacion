@@ -262,6 +262,13 @@
               <label class="sim-field"><span>Luz / día</span><input id="simLight" type="number" min="12" max="24" value="18" /></label>
               <label class="sim-field"><span>Temperatura media</span><input id="simTemp" type="number" min="18" max="32" value="24" /></label>
             </div>
+            <div class="sim-saved-configs" aria-label="Escenarios guardados">
+              <label class="sim-field"><span>Nombre del escenario</span><input id="simScenarioName" type="text" maxlength="40" placeholder="Ej. Ciclo de invierno" /></label>
+              <button class="btn btn-ghost" id="simScenarioSave" type="button">Guardar configuración</button>
+              <label class="sim-field sim-saved-select"><span>Guardados <small id="simScenarioCount">0/6</small></span><select id="simScenarioSelect" class="select"><option value="">Elegí un escenario</option></select></label>
+              <button class="btn btn-ghost" id="simScenarioApply" type="button" disabled>Aplicar</button>
+              <button class="btn btn-ghost" id="simScenarioDelete" type="button" disabled>Eliminar</button>
+            </div>
             <div class="sim-strategy-row" id="simStrategyRow" role="radiogroup" aria-label="Estrategia"></div>
             <div class="sim-grades" id="simGrades" aria-label="Escala de resultados"></div>
             <p class="sim-config-note">El resultado se evalúa en 5 notas: <b>Horrible · Regular · Buena · Muy buena · Excelente</b>. Cambiás cepa, plantas, ciclo, luz, temperatura y estrategia; el motor recorre los días completos con clima, riego, nutrición y cosecha.</p>
@@ -734,8 +741,9 @@
   <script src="strains.js?v=45"></script>
   <script src="roadmap.js?v=45"></script>
   <script src="simulator-core.js?v=1"></script>
+  <script src="scenario-core.js?v=1"></script>
   <script src="backup-core.js?v=1"></script>
-  <script src="game.js?v=46"></script>
+  <script src="game.js?v=47"></script>
   <script>if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }</script>
 </body>
 </html>

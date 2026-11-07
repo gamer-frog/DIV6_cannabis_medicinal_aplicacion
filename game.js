@@ -150,7 +150,7 @@
     selectedResource: null, queries: 0, chat: [], chatSources: [], dupOnly: false,
     journalWeek: null, journalTasks: {}, selectedStrain: null, grows: [],
     libMode: 'digest', batch: null, roadmapStream: 'all', roadmapPending: false, roadmapHorizon: 'all', roadmapQuery: '',
-    sideCollapsed: false, sim: null, simSeries: { growth: true, health: true, moisture: true, nutrition: true, yield: true },
+    sideCollapsed: false, sim: null, savedSimConfigs: [], simSeries: { growth: true, health: true, moisture: true, nutrition: true, yield: true },
     annotations: {}, readingPaths: []
   });
 
@@ -160,6 +160,7 @@
     const saved = JSON.parse(localStorage.getItem('verde-app-v2') || 'null');
     game = saved && saved.game && Array.isArray(saved.game.plants) ? saved.game : initialGame();
     app = Object.assign(defaultApp(), saved ? saved.app : {});
+    app.savedSimConfigs = window.VerdeScenarios.normalizeScenarios(app.savedSimConfigs);
     app.budget = Object.assign(initialBudget(), app.budget || {});
     app.userResources = Array.isArray(app.userResources) ? app.userResources : [];
     app.journalTasks = app.journalTasks || {};
@@ -228,6 +229,7 @@
       const previous = { game, app, storageLoadFailed };
       const nextGame = imported.game;
       const nextApp = Object.assign(defaultApp(), imported.app);
+      nextApp.savedSimConfigs = window.VerdeScenarios.normalizeScenarios(nextApp.savedSimConfigs);
       nextApp.budget = Object.assign(initialBudget(), nextApp.budget || {});
       nextApp.userResources = nextApp.userResources.map(resource => ({ ...resource, pdfData: undefined, pdfStored: false }));
       nextApp.chat = (Array.isArray(nextApp.chat) ? nextApp.chat : []).slice(-200).map(message => ({
@@ -923,6 +925,23 @@
     strategy: simStrategyId
   });
 
+  function renderSavedSimConfigs() {
+    app.savedSimConfigs = window.VerdeScenarios.normalizeScenarios(app.savedSimConfigs);
+    const select = $('#simScenarioSelect');
+    const count = $('#simScenarioCount');
+    if (!select) return;
+    const selected = select.value;
+    select.innerHTML = '<option value="">Elegí un escenario</option>' + app.savedSimConfigs
+      .map(item => `<option value="${esc(item.name)}">${esc(item.name)}</option>`).join('');
+    if (app.savedSimConfigs.some(item => item.name === selected)) select.value = selected;
+    if (count) count.textContent = `${app.savedSimConfigs.length}/${window.VerdeScenarios.MAX_SCENARIOS}`;
+    const hasSelection = app.savedSimConfigs.some(item => item.name === select.value);
+    $('#simScenarioApply').disabled = !hasSelection;
+    $('#simScenarioDelete').disabled = !hasSelection;
+    $('#simScenarioSave').disabled = app.savedSimConfigs.length >= window.VerdeScenarios.MAX_SCENARIOS &&
+      !app.savedSimConfigs.some(item => item.name.toLocaleLowerCase('es') === ($('#simScenarioName')?.value || '').trim().toLocaleLowerCase('es'));
+  }
+
   function renderSimConfig() {
     const sel = $('#simStrain');
     if (!sel) return;
@@ -931,9 +950,10 @@
       return ca - cb || a.name.localeCompare(b.name, 'es');
     });
     const current = app.sim?.strainId || sel.value || ordered[0].id;
-    sel.innerHTML = ordered.map(st => `<option value="${st.id}">${esc(st.name)} · ${esc(CAT_LABEL[strainCategory(st)])} · ${st.flower}d · ${st.yield}g/planta</option>`).join('');
+    sel.innerHTML = ordered.map(st => `<option value="${esc(st.id)}">${esc(st.name)} · ${esc(CAT_LABEL[strainCategory(st)])} · ${st.flower}d · ${st.yield}g/planta</option>`).join('');
     sel.value = current;
     const st = window.STRAINS.find(x => x.id === sel.value) || ordered[0];
+    if (st && sel.value !== st.id) sel.value = st.id;
     const meta = $('#simStrainMeta');
     if (meta && st) meta.textContent = `${CAT_LABEL[strainCategory(st)]} · ${st.flower} días de floración · ${st.yield} g/planta · ${st.thc}% THC · fuente: ${st.source || 'StrainAPI V1'}`;
 
@@ -945,9 +965,12 @@
         </button>`).join('');
       $$('#simStrategyRow [data-strategy]').forEach(b => b.addEventListener('click', () => {
         simStrategyId = b.dataset.strategy;
+        app.sim = simConfigFromUI();
+        persist();
         renderSimConfig();
       }));
     }
+    renderSavedSimConfigs();
     const grades = $('#simGrades');
     if (grades && !grades.dataset.bound) {
       grades.dataset.bound = '1';
@@ -1918,7 +1941,7 @@
     const pathsEl = $('#readingPaths');
     if (pathsEl) {
       const paths = app.readingPaths || [];
-      pathsEl.innerHTML = paths.length ? `<span class="section-kicker">RUTAS DE LECTURA GUARDADAS</span>` + paths.map(p => `<div class="reading-path-row"><b>${esc(p.tag)}</b><small>${p.ids.length} recursos · ${esc(p.at)}</small><button data-path="${p.id}">Exportar <span>↓</span></button></div>`).join('') : '';
+      pathsEl.innerHTML = paths.length ? `<span class="section-kicker">RUTAS DE LECTURA GUARDADAS</span>` + paths.map(p => `<div class="reading-path-row"><b>${esc(p.tag)}</b><small>${p.ids.length} recursos · ${esc(p.at)}</small><button data-path="${esc(p.id)}">Exportar <span>↓</span></button></div>`).join('') : '';
       $$('#readingPaths [data-path]').forEach(b => b.addEventListener('click', () => {
         const path = (app.readingPaths || []).find(x => String(x.id) === b.dataset.path);
         if (path) exportReadingPath(path);
@@ -2966,9 +2989,45 @@
       $('#simConfig')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       $('#simStrain')?.focus();
     });
-    $('#simStrain')?.addEventListener('change', () => { renderSimConfig(); });
+    $('#simStrain')?.addEventListener('change', () => { app.sim = simConfigFromUI(); persist(); renderSimConfig(); });
     ['simPlants', 'simDays', 'simLight', 'simTemp'].forEach(id => {
       $('#' + id)?.addEventListener('change', () => { app.sim = simConfigFromUI(); persist(); });
+    });
+    $('#simScenarioSelect')?.addEventListener('change', renderSavedSimConfigs);
+    $('#simScenarioName')?.addEventListener('input', renderSavedSimConfigs);
+    $('#simScenarioSave')?.addEventListener('click', () => {
+      const result = window.VerdeScenarios.saveScenario(app.savedSimConfigs, $('#simScenarioName')?.value, simConfigFromUI());
+      if (result.error) { showToast(result.error); return; }
+      app.savedSimConfigs = result.scenarios;
+      app.sim = simConfigFromUI();
+      persist();
+      renderSavedSimConfigs();
+      $('#simScenarioSelect').value = result.saved.name;
+      renderSavedSimConfigs();
+      showToast(`Escenario “${result.saved.name}” guardado.`);
+    });
+    $('#simScenarioApply')?.addEventListener('click', () => {
+      const selected = app.savedSimConfigs.find(item => item.name === $('#simScenarioSelect')?.value);
+      if (!selected) return;
+      const config = window.VerdeScenarios.normalizeConfig(selected.config);
+      simStrategyId = config.strategy;
+      $('#simStrain').value = config.strainId;
+      $('#simPlants').value = String(config.plants);
+      $('#simDays').value = String(config.days);
+      $('#simLight').value = String(config.light);
+      $('#simTemp').value = String(config.temp);
+      app.sim = simConfigFromUI();
+      persist();
+      renderSimConfig();
+      showToast(`Escenario “${selected.name}” aplicado.`);
+    });
+    $('#simScenarioDelete')?.addEventListener('click', () => {
+      const name = $('#simScenarioSelect')?.value;
+      if (!name || !window.confirm(`¿Eliminar el escenario “${name}”?`)) return;
+      app.savedSimConfigs = window.VerdeScenarios.removeScenario(app.savedSimConfigs, name);
+      persist();
+      renderSavedSimConfigs();
+      showToast(`Escenario “${name}” eliminado.`);
     });
     $('#quickSimBtn')?.addEventListener('click', () => $('#quickModal').classList.add('open'));
     $('#batchRunBtn')?.addEventListener('click', runBatchBenchmark);

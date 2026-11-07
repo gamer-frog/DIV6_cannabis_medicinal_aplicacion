@@ -27,6 +27,7 @@ test('exporta y vuelve a leer un respaldo con versión explícita y sin PDFs', (
   assert.equal(backup.pdfsIncluded, false);
   const expected = sample();
   expected.app.userResources[0].pdfStored = false;
+  expected.app.readingPaths = [];
   assert.deepEqual(parseBackup(JSON.stringify(backup)), expected);
 });
 
@@ -50,6 +51,35 @@ test('rechaza JSON mal formado, formatos desconocidos y estructura incompleta', 
   assert.throws(() => parseBackup('{'), /JSON válido/);
   assert.throws(() => parseBackup(JSON.stringify({ format: 'otro', version: 1 })), /compatible/);
   assert.throws(() => parseBackup(JSON.stringify(createBackup({}, {}))), /estructura inválida/);
+});
+
+test('normaliza rutas de lectura importadas antes de renderizarlas', () => {
+  const data = sample();
+  data.app.readingPaths = [{
+    id: '" onclick="alert(1)', tag: '<img src=x>', ids: [1, '2', -3], at: '<script>'
+  }, {
+    id: 123, tag: '<Riego>', ids: [1, 2, 3], at: 'hoy'
+  }];
+  const restored = parseBackup(JSON.stringify(createBackup(data.game, data.app)));
+  assert.deepEqual(restored.app.readingPaths, [{ id: 123, tag: '<Riego>', ids: [1, 2, 3], at: 'hoy' }]);
+});
+
+test('rechaza respaldos sin plantas y selección fuera del rango', () => {
+  const noPlants = sample();
+  noPlants.game.plants = [];
+  assert.throws(
+    () => parseBackup(JSON.stringify(createBackup(noPlants.game, noPlants.app))),
+    /estructura inválida/
+  );
+
+  for (const selected of [-1, 1, 999, 0.5]) {
+    const invalidSelection = sample();
+    invalidSelection.game.selected = selected;
+    assert.throws(
+      () => parseBackup(JSON.stringify(createBackup(invalidSelection.game, invalidSelection.app))),
+      /planta seleccionada inválida/
+    );
+  }
 });
 
 test('escapa HTML arbitrario en logs y conserva solo el formato negrita', () => {
