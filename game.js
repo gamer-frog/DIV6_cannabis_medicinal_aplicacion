@@ -5,6 +5,33 @@
   const fmt = (n) => Math.round(n).toLocaleString('es-AR');
   const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const norm = (s) => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const MAX_PDF_BYTES = 40 * 1024 * 1024;
+  function safeRichHtml(value) {
+    const template = document.createElement('template');
+    template.innerHTML = String(value || '').slice(0, 20000);
+    const allowed = new Set(['P', 'B', 'STRONG', 'SPAN', 'BLOCKQUOTE', 'Q', 'SMALL', 'DIV', 'BR']);
+    const allowedClasses = new Set(['cite', 'oracle-fragment', 'oracle-compare', 'legal-callout']);
+    const blocked = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'SVG', 'MATH', 'TEMPLATE']);
+    const clean = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) return document.createTextNode(node.nodeValue);
+      if (node.nodeType !== Node.ELEMENT_NODE) return null;
+      if (blocked.has(String(node.tagName).toUpperCase())) return null;
+      const children = [...node.childNodes].map(clean).filter(Boolean);
+      if (!allowed.has(node.tagName)) {
+        const fragment = document.createDocumentFragment();
+        children.forEach(child => fragment.append(child));
+        return fragment;
+      }
+      const element = document.createElement(node.tagName.toLowerCase());
+      const classes = [...node.classList].filter(name => allowedClasses.has(name));
+      if (classes.length) element.className = classes.join(' ');
+      children.forEach(child => element.append(child));
+      return element;
+    };
+    const output = document.createElement('div');
+    [...template.content.childNodes].map(clean).filter(Boolean).forEach(node => output.append(node));
+    return output.innerHTML;
+  }
 
   /* ---------- parser real PDF → Markdown (pdf.js, local) ---------- */
   if (window.pdfjsLib) {
@@ -2277,7 +2304,7 @@
       const f = e.target.files?.[0];
       if (f) {
         $('#dropTitle').textContent = f.name;
-        $('#dropSub').textContent = f.size > 40 * 1024 * 1024
+        $('#dropSub').textContent = f.size > MAX_PDF_BYTES
           ? 'Supera el límite de 40 MB'
           : `${(f.size / 1024 / 1024).toFixed(1)} MB · listo para indexar`;
       }
@@ -2294,7 +2321,7 @@
         if (status) status.textContent = 'El archivo no parece ser un PDF. Elegí un archivo .pdf válido.';
         return;
       }
-      if (file.size > 40 * 1024 * 1024) {
+      if (file.size > MAX_PDF_BYTES) {
         if (status) status.textContent = 'El PDF supera el límite de 40 MB. Reducí su tamaño e intentá de nuevo.';
         return;
       }
@@ -2360,9 +2387,13 @@
   }
 
   function renderChat() {
+    if (!Array.isArray(app.chat)) app.chat = [];
     if (!app.chat.length) app.chat.push({ role: 'assistant', html: oracleWelcome() });
     const log = $('#chatLog');
-    log.innerHTML = app.chat.map(m => `<div class="msg ${m.role === 'user' ? 'user' : 'assistant'}"><span class="msg-avatar">${m.role === 'user' ? 'MB' : '◈'}</span><div class="msg-body">${m.html}</div></div>`).join('');
+    log.innerHTML = app.chat.map(m => {
+      const isUser = m?.role === 'user';
+      return `<div class="msg ${isUser ? 'user' : 'assistant'}"><span class="msg-avatar">${isUser ? 'MB' : '◈'}</span><div class="msg-body">${safeRichHtml(m?.html)}</div></div>`;
+    }).join('');
     if (oraclePending) log.innerHTML += `<div class="msg assistant"><span class="msg-avatar">◈</span><div class="msg-body"><span class="typing"><i></i><i></i><i></i></span></div></div>`;
     log.scrollTop = log.scrollHeight;
     renderSources();
