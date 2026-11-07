@@ -2383,7 +2383,7 @@
   let oraclePending = false;
 
   function oracleWelcome() {
-    return 'Hola. Soy el <b>Oráculo Verde</b>: busco en tus diplomaturas y te devuelvo la respuesta con la fuente exacta. Podés preguntarme por riego, nutrición, ambiente, cosecha, costos o marco legal.';
+    return 'Hola. Soy el <b>Oráculo Verde</b>, una demo local que selecciona respuestas por palabras clave y muestra referencias a recursos relacionados. Las referencias no verifican ni garantizan el contenido de la respuesta. Podés preguntarme por riego, nutrición, ambiente, cosecha, costos o marco legal.';
   }
 
   function renderChat() {
@@ -2403,13 +2403,13 @@
     const list = app.chatSources || [];
     $('#sourceCount').textContent = list.length ? `${list.length} fuentes` : '0';
     if (!list.length) {
-      $('#sourceList').innerHTML = `<div class="sources-empty"><span>◈</span><p>Hacé una pregunta y acá vas a ver los recursos exactos que la sustentan.</p></div>`;
+      $('#sourceList').innerHTML = `<div class="sources-empty"><span>◈</span><p>Hacé una pregunta para ver referencias relacionadas; no son pasajes verificados.</p></div>`;
       return;
     }
     $('#sourceList').innerHTML = list.map(s => {
       const r = allResources().find(x => x.id === s.id);
       if (!r) return '';
-      return `<div class="source-item" data-resource="${r.id}"><div class="source-title">${esc(r.title)}<span class="source-score">${s.score}</span></div><div class="source-meta">${esc(r.diploma)}<br>${esc(r.module)} · ${esc(r.path)}</div></div>`;
+      return `<div class="source-item" data-resource="${r.id}"><div class="source-title">${esc(r.title)}</div><div class="source-meta">${esc(r.diploma)}<br>${esc(r.module)} · ${esc(r.path)}</div></div>`;
     }).join('');
     $$('#sourceList .source-item').forEach(el => el.addEventListener('click', () => navigate('library', { resourceId: Number(el.dataset.resource) })));
   }

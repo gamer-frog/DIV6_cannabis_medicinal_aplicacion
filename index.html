@@ -117,7 +117,7 @@
             </button>
             <button class="book-row" data-nav="oracle">
               <span class="book-num">04</span>
-              <span class="book-copy"><b>Oráculo</b><small>Preguntás y la biblioteca responde citando la fuente exacta.</small></span>
+              <span class="book-copy"><b>Oráculo</b><small>Respuestas locales por palabras clave, con referencias a recursos relacionados.</small></span>
               <span class="book-arrow" aria-hidden="true">→</span>
             </button>
             <button class="book-row" data-nav="budget">
@@ -163,7 +163,7 @@
             <select id="strainSort" class="select"><option value="cat">Categoría (Sativa · Indica · CBD)</option><option value="thc">Mayor THC</option><option value="fast">Ciclo más corto</option><option value="yield">Mayor rendimiento</option><option value="az">Nombre A–Z</option></select>
           </div>
 
-          <div class="strain-count-row"><span id="strainCount">14 cepas</span><span class="legend-inline"><i class="dot easy"></i>Fácil <i class="dot mid"></i>Media <i class="dot hard"></i>Alta</span></div>
+          <div class="strain-count-row"><span id="strainCount">16 perfiles demo</span><span class="legend-inline"><i class="dot easy"></i>Fácil <i class="dot mid"></i>Media <i class="dot hard"></i>Alta</span></div>
           <div class="strain-cat-tabs" id="strainCatTabs"></div>
           <div class="strain-grid" id="strainGrid"></div>
 
@@ -473,22 +473,22 @@
         <!-- ============================================================ ORÁCULO -->
         <section class="view" id="view-oracle">
           <div class="view-head oracle-head">
-            <div><div class="eyebrow"><span class="live-dot"></span>ORÁCULO IA <i>/</i> <span>RESPUESTAS CON FUENTES</span></div><h1>Preguntá.<br><em>Tu biblioteca responde.</em></h1><p class="lead">Un asistente que cruza tus diplomaturas, señala acuerdos y contradicciones, y te devuelve el fragmento exacto para que lo verifiques.</p></div>
-            <div class="oracle-badge-large"><span class="oracle-orb">◈</span><div><span class="section-kicker">MODO LOCAL · DEMO</span><b>28 fuentes disponibles</b><small>Sin enviar tus PDFs a terceros</small></div></div>
+            <div><div class="eyebrow"><span class="live-dot"></span>ORÁCULO LOCAL <i>/</i> <span>RESPUESTAS POR PALABRAS CLAVE</span></div><h1>Preguntá.<br><em>Explorá tus recursos.</em></h1><p class="lead">Respuestas de demostración seleccionadas por palabras clave, con referencias a recursos relacionados. No verifica pasajes: revisá cada referencia y confirmá la información en el material original.</p></div>
+            <div class="oracle-badge-large"><span class="oracle-orb">◈</span><div><span class="section-kicker">MODO LOCAL · DEMO</span><b>28 registros de recursos</b><small>Catálogo demostrativo; no equivale a PDFs disponibles</small></div></div>
           </div>
 
           <div class="oracle-layout">
             <section class="chat-card">
-              <div class="chat-head"><div class="chat-title"><span class="oracle-orb small">◈</span><span><b>Oráculo Verde</b><small><i class="live-dot"></i> listo · responde sobre 6 diplomaturas</small></span></div><button class="text-link" id="clearChat">Nueva consulta ↺</button></div>
+              <div class="chat-head"><div class="chat-title"><span class="oracle-orb small">◈</span><span><b>Oráculo Verde</b><small><i class="live-dot"></i> demo local · referencias del catálogo</small></span></div><button class="text-link" id="clearChat">Nueva consulta ↺</button></div>
               <div class="chat-log" id="chatLog"></div>
               <div class="chat-prompts" id="chatPrompts"><button>Riego y pH en autoflorecientes</button><button>¿Cómo presupuesto mi temporada?</button><button>Marco legal Argentina 2026</button><button>Secado y curado</button></div>
               <form class="chat-input" id="chatForm"><input id="chatInput" type="text" placeholder="Escribí tu pregunta sobre cultivo, cepas, costos o normativa…" autocomplete="off" /><button type="submit" aria-label="Enviar">→</button></form>
-              <div class="chat-disclaimer">Las respuestas son orientativas y citan material de tu biblioteca. No reemplazan asesoramiento profesional ni la normativa vigente.</div>
+              <div class="chat-disclaimer">Las respuestas son ejemplos por coincidencia de palabras clave; las referencias pueden no respaldarlas. Verificá el material original. No reemplazan asesoramiento profesional ni la normativa vigente.</div>
             </section>
             <aside class="sources-card">
-              <div class="sources-head"><span class="section-kicker">FUENTES DE ESTA RESPUESTA</span><span id="sourceCount">0</span></div>
-              <div class="sources-list" id="sourceList"><div class="sources-empty"><span>◈</span><p>Hacé una pregunta y acá vas a ver los recursos exactos que la sustentan.</p></div></div>
-              <div class="oracle-how"><b>Cómo responde</b><ol><li>Busca en títulos, etiquetas y resúmenes.</li><li>Prioriza fragmentos markdown procesados.</li><li>Cita diplomatura, módulo y archivo.</li></ol></div>
+              <div class="sources-head"><span class="section-kicker">REFERENCIAS RELACIONADAS</span><span id="sourceCount">0</span></div>
+              <div class="sources-list" id="sourceList"><div class="sources-empty"><span>◈</span><p>Hacé una pregunta para ver recursos relacionados; no son pasajes verificados.</p></div></div>
+              <div class="oracle-how"><b>Cómo responde</b><ol><li>Compara palabras clave con respuestas predefinidas.</li><li>Si no hay coincidencia, busca términos en títulos, etiquetas y resúmenes.</li><li>Muestra referencias del catálogo, no citas textuales verificadas.</li></ol></div>
             </aside>
           </div>
         </section>
