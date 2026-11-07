@@ -36,6 +36,9 @@
     for (const key of gameNumbers) {
       if (key in data.game && !isFiniteNumber(data.game[key])) throw new Error('El respaldo contiene valores inválidos.');
     }
+    if (!Number.isSafeInteger(data.game.selected) || data.game.selected < 0 || data.game.selected >= data.game.plants.length) {
+      throw new Error('El respaldo contiene una planta seleccionada inválida.');
+    }
     for (const key of ['finished', 'archived', 'vented']) {
       if (key in data.game && typeof data.game[key] !== 'boolean') throw new Error('El respaldo contiene valores inválidos.');
     }
@@ -94,7 +97,7 @@
     }
     const data = backup.data;
     if (!data || !data.game || typeof data.game !== 'object' || Array.isArray(data.game) ||
-        !Array.isArray(data.game.plants) || data.game.plants.length > 100 ||
+        !Array.isArray(data.game.plants) || data.game.plants.length === 0 || data.game.plants.length > 100 ||
         !Array.isArray(data.game.logs) || data.game.logs.length > 10000 ||
         !data.app || typeof data.app !== 'object' || Array.isArray(data.app) ||
         !data.app.budget || typeof data.app.budget !== 'object' || Array.isArray(data.app.budget) ||
@@ -110,6 +113,17 @@
       const { pdfData, ...metadata } = resource;
       return { ...metadata, pdfStored: false };
     });
+    data.app.readingPaths = (Array.isArray(data.app.readingPaths) ? data.app.readingPaths : [])
+      .filter(path => path && typeof path === 'object' && !Array.isArray(path) &&
+        Number.isSafeInteger(path.id) && path.id >= 0 && typeof path.tag === 'string' &&
+        Array.isArray(path.ids) && typeof path.at === 'string')
+      .slice(0, 12)
+      .map(path => ({
+        id: path.id,
+        tag: path.tag.slice(0, 40),
+        ids: path.ids.filter(id => Number.isSafeInteger(id) && id > 0).slice(0, 8),
+        at: path.at.slice(0, 200)
+      }));
     return data;
   }
 

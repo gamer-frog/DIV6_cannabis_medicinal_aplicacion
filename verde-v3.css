@@ -837,6 +837,12 @@ body.side-collapsed .side-user{justify-content:center;border-top:0;margin-top:8p
 .sim-field .select,.sim-field input{width:100%;background:#0a0e07;border:1px solid var(--line);border-radius:8px;height:36px;padding:0 10px;color:var(--cream);font:600 11.5px var(--sans);outline:0;min-width:0}
 .sim-field .select:focus,.sim-field input:focus{border-color:rgba(216,242,107,.45);box-shadow:0 0 0 2px rgba(216,242,107,.08)}
 .sim-field small{font:400 8px/1.4 var(--mono);color:#6d7760;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-saved-configs{display:flex;align-items:end;gap:7px;flex-wrap:wrap;margin:0 0 10px;padding:8px;background:rgba(8,10,6,.28);border:1px solid rgba(235,241,214,.08);border-radius:10px}
+.sim-saved-configs .sim-field{flex:1 1 155px;padding:6px 8px}
+.sim-saved-configs .sim-saved-select{flex:1.5 1 190px}
+.sim-saved-configs .btn{min-height:36px;padding:0 12px;font-size:9px;white-space:nowrap}
+.sim-saved-configs .btn:disabled{opacity:.42;cursor:not-allowed}
+.sim-saved-configs label>span{display:flex;justify-content:space-between;gap:8px}
 .sim-strategy-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:10px}
 .sim-strategy{background:rgba(8,10,6,.42);border:1px solid var(--line);border-radius:10px;padding:8px 9px;text-align:left;min-width:0;transition:.15s;display:flex;flex-direction:column;gap:2px}
 .sim-strategy i{font-style:normal;font-size:13px;color:#8d977e}
