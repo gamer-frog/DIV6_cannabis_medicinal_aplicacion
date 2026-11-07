@@ -42,7 +42,7 @@ Aplicación web personal, local-first y en español, orientada al estudio del ca
 - Flujo: **configurar → SIMULAR → revisar el proceso completo**. No requiere avanzar día por día.
 - Configuración de cepa, cantidad de plantas, duración, ambiente y estrategia.
 - Timechart del ciclo con crecimiento, salud, humedad, nutrición y rendimiento relativo; las series se pueden activar y desactivar.
-- Detalle de actividades del proceso, resultados de costo y rendimiento estimados, y selección entre **5 variaciones sintéticas reproducibles** para comparar el efecto de los supuestos.
+- Detalle de actividades del proceso, resultados de costo y rendimiento estimados, y selección entre **6 estrategias sintéticas reproducibles** para comparar el efecto de los supuestos.
 - Las variaciones son estimaciones ilustrativas del modelo, **no predicciones, probabilidades ni intervalos de confianza**. No representan datos empíricos ni validación agronómica.
 - El benchmark incluye estrategias comparables y exportación de replay a Markdown y JSON.
 
@@ -57,7 +57,7 @@ Aplicación web personal, local-first y en español, orientada al estudio del ca
 - Exportación del índice y de rutas de lectura a Markdown.
 
 ### Roadmap
-- Roadmap editable dentro de la app con **14 frentes y 223 hitos** (63 hechos, 28 en curso, 66 próximos y 66 de visión), 4 horizontes, métricas de progreso, riesgos y no-prioridades. Versión **v4.4 · noviembre de 2026**.
+- Roadmap editable dentro de la app con **14 frentes y 221 hitos** (63 hechos, 27 en curso, 65 próximos y 66 de visión), 4 horizontes, métricas de progreso, riesgos y no-prioridades. Versión **v4.4 · noviembre de 2026**.
 - Incluye análisis de 20 productos, 18 oportunidades y 12 brechas como material de referencia; son notas de producto, no integraciones.
 - Búsqueda, filtros y exportación completa a Markdown. El progreso de hitos se calcula desde los estados del roadmap.
 - Las cuentas reflejan el contenido actual del archivo; los hitos son una lista editable, no compromisos ni una estimación de fechas.
@@ -91,6 +91,10 @@ Abrí `http://localhost:3002/`.
 
 También puede servirse con cualquier servidor estático. La configuración de la app se guarda en `localStorage` con la clave `verde-app-v2`; los PDFs y sus Markdown extraídos se guardan aparte en IndexedDB (`verde-pdf-store-v1`).
 
+### Tests
+
+Con Node.js 18 o posterior, ejecutá `npm test`. No instala dependencias; comprueba el determinismo y las seis estrategias del simulador, además de los conteos y la integridad estructural del roadmap.
+
 ## Estructura
 
 ```text
@@ -101,7 +105,7 @@ panels.css      Biblioteca, oráculo, costos, proceso, roadmap y responsive
 verde-v3.css    Ajustes visuales de las vistas y componentes recientes
 game.js         Estado, simulador, ingesta PDF local, IndexedDB, render y eventos
 library.js      Recursos demo, fases, checks legales y base del oráculo
-roadmap.js      Roadmap v4.4: 14 frentes, 223 hitos, métricas, riesgos y no-prioridades
+roadmap.js      Roadmap v4.4: 14 frentes, 221 hitos, métricas, riesgos y no-prioridades
 strains.js      Catálogo demo de 16 perfiles autoflorecientes con categoría y fuente
 sw.js           Caché de assets estáticos para la app web
 manifest.webmanifest  Metadatos de instalación web

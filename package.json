@@ -1,0 +1,8 @@
+{
+  "name": "verde-local-study-app",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test"
+  }
+}

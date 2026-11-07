@@ -1,6 +1,6 @@
 # Riego y humedad del sustrato
 
-> Convertido desde PDF: 03_riego_sustrato.pdf · 36 páginas · sin subir a terceros.
+> Convertido desde PDF: 03_riego_sustrato.pdf · 36 páginas · contenido procesado en el navegador; pdf.js se carga desde cdnjs.
 
 ## Página 1
 

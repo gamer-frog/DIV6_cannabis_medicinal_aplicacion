@@ -5,22 +5,94 @@
   const fmt = (n) => Math.round(n).toLocaleString('es-AR');
   const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const norm = (s) => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  function safeRichHtml(value) {
+    const template = document.createElement('template');
+    template.innerHTML = String(value || '').slice(0, 20000);
+    const allowed = new Set(['P', 'B', 'STRONG', 'SPAN', 'BLOCKQUOTE', 'Q', 'SMALL', 'DIV', 'BR']);
+    const allowedClasses = new Set(['cite', 'oracle-fragment', 'oracle-compare', 'legal-callout']);
+    const blocked = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'SVG', 'MATH', 'TEMPLATE']);
+    const clean = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) return document.createTextNode(node.nodeValue);
+      if (node.nodeType !== Node.ELEMENT_NODE) return null;
+      if (blocked.has(String(node.tagName).toUpperCase())) return null;
+      const children = [...node.childNodes].map(clean).filter(Boolean);
+      if (!allowed.has(node.tagName)) {
+        const fragment = document.createDocumentFragment();
+        children.forEach(child => fragment.append(child));
+        return fragment;
+      }
+      const element = document.createElement(node.tagName.toLowerCase());
+      const classes = [...node.classList].filter(name => allowedClasses.has(name));
+      if (classes.length) element.className = classes.join(' ');
+      children.forEach(child => element.append(child));
+      return element;
+    };
+    const output = document.createElement('div');
+    [...template.content.childNodes].map(clean).filter(Boolean).forEach(node => output.append(node));
+    return output.innerHTML;
+  }
 
   /* ---------- parser real PDF → Markdown (pdf.js, local) ---------- */
   if (window.pdfjsLib) {
     try { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch {}
   }
+  const MAX_PDF_BYTES = 40 * 1024 * 1024;
+  async function validatePdfFile(file) {
+    if (!file) return 'Elegí un archivo PDF antes de continuar.';
+    if (!/\.pdf$/i.test(file.name) || (file.type && file.type !== 'application/pdf')) return 'El archivo no parece ser un PDF. Elegí un archivo .pdf válido.';
+    if (file.size > MAX_PDF_BYTES) return 'El PDF supera el límite de 40 MB. Reducí su tamaño e intentá de nuevo.';
+    try {
+      const header = new Uint8Array(await file.slice(0, 5).arrayBuffer());
+      if (new TextDecoder().decode(header) !== '%PDF-') return 'No se reconoce la firma PDF del archivo. Revisá que no esté dañado.';
+    } catch {
+      return 'No se pudo leer el archivo PDF. Volvé a seleccionarlo e intentá de nuevo.';
+    }
+    return '';
+  }
+  function resourceImportStatus(parsed, originalStored) {
+    const storage = originalStored ? 'PDF original guardado localmente.' : 'El PDF original no pudo guardarse localmente.';
+    return parsed.failed
+      ? `Agregado como pendiente: ${parsed.reason || 'sin texto extraíble'}. ${storage}`
+      : `Markdown generado: ${parsed.meta?.processed || parsed.pages} de ${parsed.pages} páginas procesadas y ${parsed.chars} caracteres. ${storage}`;
+  }
+
+  async function finalizeResourceImport(resource, parsed, file, status) {
+    let originalStored = false;
+    try {
+      await storePdfBlob(resource.id, file);
+      resource.pdfStored = true;
+      originalStored = true;
+    } catch {}
+    app.userResources.push(resource);
+    app.selectedResource = resource.id;
+    persist();
+    const message = resourceImportStatus(parsed, originalStored);
+    if (status) status.textContent = message;
+    const toast = parsed.failed
+      ? `Agregado pendiente (${parsed.reason || 'sin texto extraíble'})${originalStored ? ' · PDF guardado localmente' : ' · PDF original no pudo guardarse'}.`
+      : `Convertido: ${parsed.meta?.processed || parsed.pages} de ${parsed.pages} páginas procesadas · ${fmt(parsed.chars)} caracteres → Markdown${originalStored ? ' · PDF guardado localmente' : ' · PDF original no pudo guardarse'}.`;
+    showToast(toast);
+    return { originalStored, message, toast };
+  }
+
   let pdfDbPromise;
   function openPdfStore() {
     if (!('indexedDB' in window)) return Promise.reject(new Error('IndexedDB no disponible'));
-    if (!pdfDbPromise) pdfDbPromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open('verde-pdf-store-v1', 1);
-      request.onupgradeneeded = () => {
-        if (!request.result.objectStoreNames.contains('pdfs')) request.result.createObjectStore('pdfs');
-      };
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error || new Error('No se pudo abrir el almacenamiento local'));
-    });
+    if (!pdfDbPromise) {
+      const opening = new Promise((resolve, reject) => {
+        const request = indexedDB.open('verde-pdf-store-v1', 1);
+        request.onupgradeneeded = () => {
+          if (!request.result.objectStoreNames.contains('pdfs')) request.result.createObjectStore('pdfs');
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('No se pudo abrir el almacenamiento local'));
+        request.onblocked = () => reject(new Error('La base local está bloqueada por otra pestaña'));
+      });
+      pdfDbPromise = opening.catch(error => {
+        pdfDbPromise = null;
+        throw error;
+      });
+    }
     return pdfDbPromise;
   }
   async function storePdfBlob(id, blob) {
@@ -49,11 +121,11 @@
       const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
       const totalPages = pdf.numPages;
       const pages = Math.min(totalPages, 30);
-      const out = [`# ${title}`, '', `> Convertido desde PDF: ${file.name} · ${totalPages} páginas (${pages} procesadas) · sin subir a terceros.`, ''];
+      const out = [`# ${title}`, '', `> Convertido desde PDF: ${file.name} · ${totalPages} páginas (${pages} procesadas) · contenido procesado en este navegador; pdf.js se carga desde cdnjs.`, ''];
       const headings = [];
       let chars = 0;
       for (let p = 1; p <= pages; p++) {
-        if (onProgress) onProgress(p, pages);
+        if (onProgress) onProgress(p, pages, totalPages);
         const page = await pdf.getPage(p);
         const tc = await page.getTextContent();
         let txt = '';
@@ -144,17 +216,66 @@
     annotations: {}, readingPaths: []
   });
 
+  const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+  const boundedNumber = (value, fallback, min, max) => Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+  const objectOrDefault = (value) => isRecord(value) ? value : {};
+
+  function restoreGame(value) {
+    const fresh = initialGame();
+    if (!isRecord(value) || !Array.isArray(value.plants) || value.plants.length !== fresh.plants.length) return fresh;
+    const plants = value.plants.map((plant, i) => {
+      if (!isRecord(plant)) return null;
+      const base = fresh.plants[i];
+      return {
+        id: base.id,
+        age: boundedNumber(plant.age, base.age, 1, 75),
+        health: boundedNumber(plant.health, base.health, 0, 100),
+        moisture: boundedNumber(plant.moisture, base.moisture, 0, 100),
+        nutrition: boundedNumber(plant.nutrition, base.nutrition, 0, 100),
+        alive: typeof plant.alive === 'boolean' ? plant.alive : base.alive,
+        checked: typeof plant.checked === 'boolean' ? plant.checked : base.checked
+      };
+    });
+    if (plants.some(plant => !plant)) return fresh;
+    const restored = { ...fresh, plants };
+    const numeric = { day: [1, 75], selected: [0, 8], water: [0, 100], nutrients: [0, 100], energy: [0, 100], cash: [0, 1e9], temp: [0, 60], humidity: [0, 100], light: [0, 24], harvested: [0, 9], harvestYield: [0, 1e7], spent: [0, 1e12] };
+    Object.entries(numeric).forEach(([key, [min, max]]) => { restored[key] = boundedNumber(value[key], fresh[key], min, max); });
+    ['vented', 'finished', 'archived'].forEach(key => { restored[key] = typeof value[key] === 'boolean' ? value[key] : fresh[key]; });
+    restored.logs = Array.isArray(value.logs) ? value.logs.slice(0, 8).filter(isRecord).map(entry => ({
+      day: Math.round(boundedNumber(entry.day, restored.day, 1, 75)),
+      text: typeof entry.text === 'string' ? entry.text.slice(0, 5000) : '',
+      kind: ['success', 'warning', ''].includes(entry.kind) ? entry.kind : ''
+    })) : fresh.logs;
+    return restored;
+  }
+
+  function restoreApp(value) {
+    const restored = Object.assign(defaultApp(), isRecord(value) ? value : {});
+    restored.view = ['panel', 'strains', 'journal', 'sim', 'library', 'oracle', 'budget', 'process', 'roadmap'].includes(restored.view) ? restored.view : 'panel';
+    restored.budget = Object.assign(initialBudget(), objectOrDefault(restored.budget));
+    const budgetBounds = { plants: [1, 100], yield: [0, 1000], price: [0, 1e9], kwh: [0, 1e6], hours: [0, 24], days: [1, 365], watts: [0, 1e6] };
+    Object.entries(budgetBounds).forEach(([key, [min, max]]) => { restored.budget[key] = boundedNumber(restored.budget[key], initialBudget()[key], min, max); });
+    restored.budget.mode = ['indoor', 'outdoor'].includes(restored.budget.mode) ? restored.budget.mode : 'indoor';
+    ['tasks', 'legal', 'journalTasks', 'annotations', 'simSeries'].forEach(key => { restored[key] = objectOrDefault(restored[key]); });
+    restored.userResources = Array.isArray(restored.userResources) ? restored.userResources.filter(isRecord) : [];
+    restored.grows = Array.isArray(restored.grows) ? restored.grows.filter(isRecord).slice(0, 50) : [];
+    restored.readingPaths = Array.isArray(restored.readingPaths) ? restored.readingPaths.filter(path => isRecord(path) && Array.isArray(path.ids)).slice(0, 12) : [];
+    restored.chat = Array.isArray(restored.chat) ? restored.chat.filter(message => isRecord(message) && ['user', 'assistant'].includes(message.role) && typeof message.html === 'string').slice(-24).map(message => ({ role: message.role, html: message.html.slice(0, 20000) })) : [];
+    restored.chatSources = Array.isArray(restored.chatSources) ? restored.chatSources.filter(source => isRecord(source) && Number.isFinite(source.id) && Number.isFinite(source.score)).slice(0, 20) : [];
+    restored.queries = boundedNumber(restored.queries, 0, 0, 1e9);
+    restored.dupOnly = restored.dupOnly === true;
+    restored.sideCollapsed = restored.sideCollapsed === true;
+    restored.roadmapPending = false;
+    return restored;
+  }
+
   let game, app;
   try {
-    const saved = JSON.parse(localStorage.getItem('verde-app-v2') || 'null');
-    game = saved && saved.game && Array.isArray(saved.game.plants) ? saved.game : initialGame();
-    app = Object.assign(defaultApp(), saved ? saved.app : {});
-    app.budget = Object.assign(initialBudget(), app.budget || {});
-    app.userResources = Array.isArray(app.userResources) ? app.userResources : [];
-    app.journalTasks = app.journalTasks || {};
-    app.grows = Array.isArray(app.grows) ? app.grows : [];
-    app.annotations = app.annotations || {};
-    app.readingPaths = Array.isArray(app.readingPaths) ? app.readingPaths : [];
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem('verde-app-v2') || 'null'); }
+    catch (error) { console.warn('Se ignoraron datos locales inválidos de Verde.', error); }
+    game = restoreGame(saved && saved.game);
+    app = restoreApp(saved && saved.app);
   } catch { game = initialGame(); app = defaultApp(); }
 
   const persist = () => {
@@ -518,6 +639,10 @@
     };
   }
 
+  if (typeof window !== 'undefined' && window.__VERDE_TEST__) {
+    window.__VERDE_TEST__.seededRandom = seededRandom;
+  }
+
   function simulateBatch(strategy, seed = 7) {
     const cfg = BATCH_STRATEGIES.find(s => s.id === strategy) || BATCH_STRATEGIES[0];
     const plants = Array.from({ length: 9 }, (_, i) => ({
@@ -618,6 +743,11 @@
       stressDays, vpdAlerts, events, harvestDay,
       days: 75
     };
+  }
+
+  if (typeof window !== 'undefined' && window.__VERDE_TEST__) {
+    window.__VERDE_TEST__.simulateBatch = simulateBatch;
+    window.__VERDE_TEST__.batchStrategies = BATCH_STRATEGIES.map(({ id }) => id);
   }
 
   let batchCache = null;
@@ -1119,7 +1249,7 @@
     });
 
     $('#logCount').textContent = String(game.logs.length).padStart(2, '0');
-    $('#logList').innerHTML = game.logs.slice(0, 4).map(x => `<div class="log-item"><span class="log-mark ${x.kind}"></span><span class="log-time">D${String(x.day).padStart(2, '0')}</span><span class="log-text">${x.text}</span></div>`).join('');
+    $('#logList').innerHTML = game.logs.slice(0, 4).map(x => `<div class="log-item"><span class="log-mark ${['success', 'warning'].includes(x.kind) ? x.kind : ''}"></span><span class="log-time">D${String(Math.round(boundedNumber(x.day, game.day, 1, 75))).padStart(2, '0')}</span><span class="log-text">${safeRichHtml(x.text)}</span></div>`).join('');
     $('#tipText').textContent = !selected.alive ? 'Elegí una planta activa para continuar con los cuidados.'
       : selected.moisture < 30 ? 'El sustrato está seco. Una pequeña cantidad de agua puede ayudar.'
       : selected.moisture > 78 ? 'El sustrato sigue húmedo; esperá antes de volver a regar.'
@@ -2159,6 +2289,23 @@
     });
   }
 
+  let resourceImportPending = false;
+  async function runResourceImport(status, submitButton, task) {
+    if (resourceImportPending) {
+      if (status) status.textContent = 'Ya hay una importación en curso. Esperá a que termine.';
+      return;
+    }
+    resourceImportPending = true;
+    if (submitButton) submitButton.disabled = true;
+    try {
+      await task();
+    } catch (error) {
+      if (status) status.textContent = `No se pudo completar la importación: ${String(error && error.message || error).slice(0, 120)}`;
+    } finally {
+      resourceImportPending = false;
+      if (submitButton) submitButton.disabled = false;
+    }
+  }
   function bindLibrary() {
     $$('.lib-mode').forEach(btn => btn.addEventListener('click', () => {
       setLibMode(btn.dataset.libmode);
@@ -2187,30 +2334,20 @@
       const f = e.target.files?.[0];
       if (f) {
         $('#dropTitle').textContent = f.name;
-        $('#dropSub').textContent = f.size > 40 * 1024 * 1024
+        $('#dropSub').textContent = f.size > MAX_PDF_BYTES
           ? 'Supera el límite de 40 MB'
           : `${(f.size / 1024 / 1024).toFixed(1)} MB · listo para indexar`;
       }
     });
     $('#addForm')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const file = $('#fileInput')?.files?.[0];
       const status = $('#parseStatus');
-      if (!file) {
-        if (status) status.textContent = 'Elegí un archivo PDF antes de continuar.';
-        return;
-      }
-      if (!/\.pdf$/i.test(file.name) || (file.type && file.type !== 'application/pdf')) {
-        if (status) status.textContent = 'El archivo no parece ser un PDF. Elegí un archivo .pdf válido.';
-        return;
-      }
-      if (file.size > 40 * 1024 * 1024) {
-        if (status) status.textContent = 'El PDF supera el límite de 40 MB. Reducí su tamaño e intentá de nuevo.';
-        return;
-      }
-      const header = new Uint8Array(await file.slice(0, 5).arrayBuffer());
-      if (new TextDecoder().decode(header) !== '%PDF-') {
-        if (status) status.textContent = 'No se reconoce la firma PDF del archivo. Revisá que no esté dañado.';
+      const submitButton = e.currentTarget.querySelector('button[type="submit"]');
+      await runResourceImport(status, submitButton, async () => {
+      const file = $('#fileInput')?.files?.[0];
+      const validationError = await validatePdfFile(file);
+      if (validationError) {
+        if (status) status.textContent = validationError;
         return;
       }
       const diploma = $('#addDiploma')?.value || 'Cultivo Interior';
@@ -2224,7 +2361,7 @@
       });
       if (status) status.textContent = 'Convirtiendo con pdf.js…';
       let parsed = { md: '', pages: 1, chars: 0, headings: [], topics: [], failed: true, reason: 'sin texto extraíble', meta: {} };
-      parsed = await pdfToMarkdown(file, title.charAt(0).toUpperCase() + title.slice(1), (p, tot) => { if (status) status.textContent = `Convirtiendo con pdf.js… página ${p}/${tot}`; });
+      parsed = await pdfToMarkdown(file, title.charAt(0).toUpperCase() + title.slice(1), (p, processed, total) => { if (status) status.textContent = `Convirtiendo con pdf.js… página ${p} de ${processed} (PDF: ${total})`; });
       const ok = file && !parsed.failed;
       const meta = parsed.meta || {};
       const resource = {
@@ -2240,25 +2377,14 @@
         mdText: ok ? parsed.md.slice(0, 20000) : '',
         mdChars: parsed.chars || 0
       };
-      let originalStored = false;
-      try {
-        await storePdfBlob(resource.id, file);
-        resource.pdfStored = true;
-        originalStored = true;
-      } catch {}
-      app.userResources.push(resource);
-      app.selectedResource = resource.id;
-      persist();
+      await finalizeResourceImport(resource, parsed, file, status);
       $('#addModal').classList.remove('open');
       $('#addForm').reset();
-      if (status) status.textContent = 'Listo: se extrae texto página por página y se crea el Markdown con metadata y hash.';
       $('#dropTitle').textContent = 'Arrastrá un PDF o hacé clic';
-      $('#dropSub').textContent = 'Máx. 40 MB · se procesa localmente, sin subir a terceros';
+      $('#dropSub').textContent = 'Máx. 40 MB · contenido local; pdf.js usa cdnjs';
       libFiltersReady = false;
       renderLibrary();
-      showToast(ok
-        ? `Convertido: ${parsed.pages} páginas · ${fmt(parsed.chars)} caracteres → Markdown${originalStored ? ' · PDF guardado localmente' : ' · PDF original no pudo guardarse'}.`
-        : `Agregado pendiente (${parsed.reason || 'sin texto extraíble'})${originalStored ? ' · PDF guardado localmente' : ''}.`);
+      });
     });
   }
 
@@ -2272,7 +2398,7 @@
   function renderChat() {
     if (!app.chat.length) app.chat.push({ role: 'assistant', html: oracleWelcome() });
     const log = $('#chatLog');
-    log.innerHTML = app.chat.map(m => `<div class="msg ${m.role === 'user' ? 'user' : 'assistant'}"><span class="msg-avatar">${m.role === 'user' ? 'MB' : '◈'}</span><div class="msg-body">${m.html}</div></div>`).join('');
+    log.innerHTML = app.chat.map(m => `<div class="msg ${m.role === 'user' ? 'user' : 'assistant'}"><span class="msg-avatar">${m.role === 'user' ? 'MB' : '◈'}</span><div class="msg-body">${safeRichHtml(m.html)}</div></div>`).join('');
     if (oraclePending) log.innerHTML += `<div class="msg assistant"><span class="msg-avatar">◈</span><div class="msg-body"><span class="typing"><i></i><i></i><i></i></span></div></div>`;
     log.scrollTop = log.scrollHeight;
     renderSources();
