@@ -73,9 +73,11 @@
           <span class="legal-pill"><span class="live-dot"></span>ARGENTINA · 2026</span>
           <button class="icon-btn" id="guideBtn" aria-label="Guía rápida" title="Guía rápida">?</button>
           <button class="icon-btn" id="soundBtn" aria-label="Activar sonido" title="Sonido">◖</button>
+          <button class="icon-btn" id="backupOpenBtn" type="button" aria-label="Respaldo de datos" title="Respaldo de datos">↕</button>
           <span class="top-avatar">MB</span>
         </div>
       </header>
+      <div class="storage-status" id="storageStatus" role="alert" aria-live="assertive" hidden></div>
 
       <main class="views" id="main">
         <!-- ============================================================ INICIO · ÍNDICE DE LIBRO -->
@@ -694,6 +696,7 @@
   </div>
 
   <!-- ============================================================ MODALES -->
+  <div class="modal-backdrop" id="backupModal"><div class="modal backup-modal" role="dialog" aria-modal="true" aria-labelledby="backupTitle"><button class="modal-close" data-close="backupModal" aria-label="Cerrar">×</button><span class="section-kicker">RESGUARDO LOCAL</span><h2 id="backupTitle">Tus datos, bajo tu control.</h2><p>Exportá o restaurá una copia JSON de tu partida, preferencias, notas y recursos de biblioteca agregados.</p><div class="quick-note"><span>ⓘ</span><span>Los archivos PDF originales no se incluyen en el respaldo. Al restaurar, los registros quedan, pero tendrás que volver a añadir sus PDFs.</span></div><div class="backup-actions"><button class="btn btn-lime full" id="backupExportBtn" type="button">Descargar respaldo JSON <span>↓</span></button><button class="btn btn-ghost full" id="backupImportBtn" type="button">Restaurar desde archivo <span>↑</span></button><input id="backupFileInput" type="file" accept="application/json,.json" hidden></div></div></div>
   <div class="modal-backdrop" id="guideModal"><div class="modal"><button class="modal-close" data-close="guideModal" aria-label="Cerrar">×</button><span class="section-kicker">GUÍA DE CAMPO</span><h2>Un ecosistema en equilibrio.</h2><p>Tu invernadero funciona como un pequeño sistema vivo. Las condiciones cambian con el paso de los días: observá antes de actuar y evitá corregir demasiado de golpe.</p><div class="guide-list"><div><span>01</span><p><b>Observá cada planta.</b><br>Seleccioná una maceta para revisar su etapa, vitalidad y humedad.</p></div><div><span>02</span><p><b>Cuidados con medida.</b><br>Regar o nutrir ayuda si la planta lo necesita. El exceso también genera estrés.</p></div><div><span>03</span><p><b>Gestioná tus reservas.</b><br>Reponé agua, insumos o energía con el botón + de Recursos.</p></div><div><span>04</span><p><b>Aprendé de la biblioteca.</b><br>Cada recomendación del simulador está vinculada a material de tus diplomaturas.</p></div><div><span>05</span><p><b>Acelerá cuando sepas.</b><br>La simulación veloz corre la temporada completa con una estrategia y te muestra el resultado.</p></div></div><button class="btn btn-lime full" data-close="guideModal">Entendido <span>→</span></button></div></div>
 
   <div class="modal-backdrop" id="shopModal"><div class="modal shop-modal"><button class="modal-close" data-close="shopModal" aria-label="Cerrar">×</button><span class="section-kicker">TIENDA DE SUMINISTROS</span><h2>Reponer recursos.</h2><p>Una pequeña inversión para mantener el invernadero en marcha. Los gastos se suman al presupuesto de la temporada.</p><div class="shop-items"><button data-buy="water"><span class="resource-symbol water-symbol">◉</span><span><b>Agua filtrada</b><small>+5 litros</small></span><strong>$4.000 <i>COMPRAR</i></strong></button><button data-buy="nutrient"><span class="resource-symbol nutrient-symbol">✳</span><span><b>Mezcla equilibrada</b><small>+3 dosis</small></span><strong>$8.000 <i>COMPRAR</i></strong></button><button data-buy="energy"><span class="resource-symbol energy-symbol">ϟ</span><span><b>Crédito energético</b><small>+20 unidades</small></span><strong>$6.000 <i>COMPRAR</i></strong></button></div><div class="wallet">FONDO DE TEMPORADA <b id="cashValue">$48.000</b></div></div></div>
@@ -730,7 +733,9 @@
   <script src="library.js?v=45"></script>
   <script src="strains.js?v=45"></script>
   <script src="roadmap.js?v=45"></script>
-  <script src="game.js?v=45"></script>
+  <script src="simulator-core.js?v=1"></script>
+  <script src="backup-core.js?v=1"></script>
+  <script src="game.js?v=46"></script>
   <script>if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }</script>
 </body>
 </html>
