@@ -57,7 +57,8 @@ Aplicación web personal, local-first y en español, orientada al estudio del ca
 - Exportación del índice y de rutas de lectura a Markdown.
 
 ### Roadmap
-- Roadmap editable dentro de la app con **14 frentes y 223 hitos** (63 hechos, 28 en curso, 66 próximos y 66 de visión), 4 horizontes, métricas de progreso, riesgos y no-prioridades. Versión **v4.4 · noviembre de 2026**.
+- Roadmap editable dentro de la app con **14 frentes y 222 hitos** (63 hechos, 27 en curso, 66 próximos y 66 de visión), 4 horizontes, métricas de progreso, riesgos y no-prioridades. Versión **v4.4 · noviembre de 2026**.
+- La prioridad de desarrollo es primero la confiabilidad y la protección de datos; después, el simulador y las mejoras de experiencia.
 - Incluye análisis de 20 productos, 18 oportunidades y 12 brechas como material de referencia; son notas de producto, no integraciones.
 - Búsqueda, filtros y exportación completa a Markdown. El progreso de hitos se calcula desde los estados del roadmap.
 - Las cuentas reflejan el contenido actual del archivo; los hitos son una lista editable, no compromisos ni una estimación de fechas.
@@ -89,7 +90,11 @@ python3 -m http.server 3002
 
 Abrí `http://localhost:3002/`.
 
-También puede servirse con cualquier servidor estático. La configuración de la app se guarda en `localStorage` con la clave `verde-app-v2`; los PDFs y sus Markdown extraídos se guardan aparte en IndexedDB (`verde-pdf-store-v1`).
+También puede servirse con cualquier servidor estático. La configuración de la app se guarda en `localStorage` con la clave `verde-app-v2`; los PDFs y sus Markdown extraídos se guardan aparte en IndexedDB (`verde-pdf-store-v1`). Desde la interfaz se puede descargar/restaurar un respaldo JSON validado; no incluye los PDFs originales y la restauración reemplaza los datos actuales, por lo que conviene conservar una copia aparte.
+
+## Pruebas
+
+Ejecutá `node --test` para correr las pruebas de simulación, escenarios y respaldos. Hay cobertura automatizada, pero su porcentaje todavía no está medido.
 
 ## Estructura
 
@@ -101,7 +106,7 @@ panels.css      Biblioteca, oráculo, costos, proceso, roadmap y responsive
 verde-v3.css    Ajustes visuales de las vistas y componentes recientes
 game.js         Estado, simulador, ingesta PDF local, IndexedDB, render y eventos
 library.js      Recursos demo, fases, checks legales y base del oráculo
-roadmap.js      Roadmap v4.4: 14 frentes, 223 hitos, métricas, riesgos y no-prioridades
+roadmap.js      Roadmap v4.4: 14 frentes, 222 hitos, métricas, riesgos y no-prioridades
 strains.js      Catálogo demo de 16 perfiles autoflorecientes con categoría y fuente
 sw.js           Caché de assets estáticos para la app web
 manifest.webmanifest  Metadatos de instalación web

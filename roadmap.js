@@ -8,8 +8,8 @@ window.ROADMAP = {
   northStar: 'Una app personal de estudio del cannabis medicinal en Argentina: entender un batch completo —de semilla a frasco— simulándolo, cruzándolo con tu biblioteca y viendo el porqué de cada evento.',
   statement: 'Verde no es un diario de cultivo. Es un laboratorio de comprensión: elegir cepa, configurar y SIMULAR todo el ciclo con timechart, un índice de sabiduría que conecta PDFs, y un banco de pruebas de estrategias comparables. El roadmap es la memoria del proyecto: lo que ya está, lo que falta, lo que aprendimos de otras apps y lo que decidimos no copiar.',
   horizons: [
-    { id: 'h0', label: 'Ahora', window: 'Q4 2026', note: 'Consolidar el índice, la biblioteca digerida, el batch benchmark y el roadmap como sistema operativo del producto.' },
-    { id: 'h1', label: 'Próximo', window: 'Q1–Q2 2027', note: 'Pipeline real de PDFs, búsqueda semántica, escenarios comparables, PWA y accesibilidad.' },
+    { id: 'h0', label: 'Ahora', window: 'Q4 2026', note: 'Priorizar confiabilidad, integridad y protección de datos antes de ampliar el simulador o pulir la experiencia.' },
+    { id: 'h1', label: 'Próximo', window: 'Q1–Q2 2027', note: 'OCR para escaneos, búsqueda semántica, incertidumbre y comparadores del simulador, acceso offline completo y accesibilidad.' },
     { id: 'h2', label: 'Después', window: 'Q3–Q4 2027', note: 'Grafo de conocimiento, oráculo con pasajes, integraciones de sensores y analítica de cultivo.' },
     { id: 'h3', label: 'Visión', window: '2028–2030', note: 'Laboratorio personal y comunitario, datos verificables, hardware abierto y educación a escala.' }
   ],
@@ -23,7 +23,7 @@ window.ROADMAP = {
     { label: 'Estrategias comparables en benchmark', value: '6', target: '6+', pct: 100 },
     { label: 'Hitos del roadmap completados', target: '100%', dynamic: 'roadmap' },
     { label: 'Tiempo a primer insight útil', value: '≈2 min', target: '<60 s', pct: 55 },
-    { label: 'Cobertura de tests del simulador', value: '0%', target: '80%', pct: 0 },
+    { label: 'Archivos de tests automatizados', value: '3', target: 'medir cobertura', pct: 0 },
     { label: 'Accesibilidad AA', value: 'base', target: 'AA completo', pct: 35 },
     { label: 'Funciona sin conexión', value: 'no', target: 'PWA offline', pct: 0 }
   ],
@@ -254,16 +254,16 @@ window.ROADMAP = {
     { area: 'Confianza', today: 'Transparencia de datos demo', missing: 'Auditoría externa, sesgos y precisión', bet: 'Informe público anual', horizon: 'h3' }
   ],
   devOrder: [
-    { n: 1, title: 'Cerrar el índice de estudio', desc: 'Inicio simple en 7 capítulos, sin KPIs random, sin Diario, sin gamificación.' },
-    { n: 2, title: 'Biblioteca en dos capas', desc: 'Ingesta (PDFs con tapa por curso/carpeta + Markdown) y Vista digerida como datos que emergen.' },
-    { n: 3, title: 'Simulador de estudio', desc: 'Cepa + config + SIMULAR con timechart y notas Horrible–Excelente. Nada más.' },
-    { n: 4, title: 'Catálogo medicinal balanceado', desc: 'Sativa / Indica / CBD / Híbrida con fuentes anotadas y fichas medicinales sin prescribir.' },
-    { n: 5, title: 'Oráculo con cita exacta', desc: 'Respuesta + pasaje + página + hash. Si no hay evidencia: “no sé”.' },
-    { n: 6, title: 'Costo real por gramo (AR 2026)', desc: 'Supuestos editables y cálculo transparente, sin promesa de venta.' },
-    { n: 7, title: 'Proceso + marco REPROCANN', desc: '6 fases con checklist y normativa fechada; verificar fuente oficial.' },
-    { n: 8, title: 'Datos locales y exports', desc: 'Todo en el navegador; Markdown/JSON exportables; cero login.' },
-    { n: 9, title: 'Accesibilidad y letra legible', desc: 'AA, teclado completo y tipografía que se lee en móvil y desktop.' },
-    { n: 10, title: 'PWA offline', desc: 'Estudiar sin conexión en el cultivo.' }
+    { n: 1, title: 'Confiabilidad e integridad de datos', desc: 'Probar persistencia, validar importaciones y cubrir fallos sin perder datos.' },
+    { n: 2, title: 'Protección y recuperación de datos', desc: 'Respaldos seguros, restauración clara y exportación verificable antes de sumar funciones.' },
+    { n: 3, title: 'Cerrar el índice de estudio', desc: 'Inicio simple en 7 capítulos, sin KPIs random, sin Diario, sin gamificación.' },
+    { n: 4, title: 'Biblioteca en dos capas', desc: 'Ingesta (PDFs con tapa por curso/carpeta + Markdown) y Vista digerida como datos que emergen.' },
+    { n: 5, title: 'Simulador de estudio', desc: 'Cepa + config + SIMULAR con timechart y notas Horrible–Excelente. Nada más.' },
+    { n: 6, title: 'Catálogo medicinal balanceado', desc: 'Sativa / Indica / CBD / Híbrida con fuentes anotadas y fichas medicinales sin prescribir.' },
+    { n: 7, title: 'Oráculo con cita exacta', desc: 'Respuesta + pasaje + página + hash. Si no hay evidencia: “no sé”.' },
+    { n: 8, title: 'Costo real por gramo (AR 2026)', desc: 'Supuestos editables y cálculo transparente, sin promesa de venta.' },
+    { n: 9, title: 'Proceso + marco REPROCANN', desc: '6 fases con checklist y normativa fechada; verificar fuente oficial.' },
+    { n: 10, title: 'Datos locales, accesibilidad y offline', desc: 'Datos locales y exportables; mejorar teclado, lectura y cobertura offline por etapas.' }
   ],
   notInterested: [
     { title: 'Diario completo', note: 'No se desarrolla como módulo separado. El contexto vive en el batch, el proceso y la biblioteca.' },
@@ -308,7 +308,7 @@ window.ROADMAP = {
         H('Índice de sabiduría con cursos, módulos y % cargado', 'done', 'h0', 'M', 'Vista de libro con progreso por curso y por parte.', '6 cursos'),
         H('Tarjetas de curso con nombre, PDFs, páginas y extras', 'done', 'h0', 'S', 'Cada curso declara qué % está cargado.', '5 categorías'),
         H('Metadata visible por PDF: ruta, md, hash, idioma, tags', 'done', 'h0', 'S', 'Trazabilidad mínima en la ficha del recurso.', '7 campos'),
-        H('Pipeline de digestión con % por etapa', 'done', 'h0', 'S', 'Ingesta, OCR, metadata, Markdown, embeddings, grafo.', '7 etapas'),
+        H('Pipeline de digestión con % por etapa', 'done', 'h0', 'S', 'Ingesta, extracción de texto, metadata y Markdown; OCR, embeddings y grafo siguen pendientes.', '4 etapas disponibles'),
         H('Exportar el índice de sabiduría en Markdown', 'done', 'h0', 'S', 'Curso, módulo, estado, ruta Markdown, hash y vínculos en un solo archivo.', '1 archivo'),
         H('Tapas de PDF por curso/carpeta', 'done', 'h0', 'M', 'Ingesta visual: cada PDF con tapa, curso, módulo, carpeta física y ruta Markdown.', '28 tapas'),
         H('Vista digerida como datos que emergen', 'done', 'h0', 'M', 'Guía completa desde los Markdown: listos, cruces entre cursos y huecos de digestión.', '3 emergencias'),
@@ -318,7 +318,7 @@ window.ROADMAP = {
         H('Búsqueda local por tokens, título y etiquetas', 'done', 'h0', 'M', 'Coincidencias léxicas rankean resultados en la biblioteca; no usa embeddings.', '<300 ms'),
         H('Oráculo con fragmento y comparador', 'done', 'h0', 'M', 'Pasaje, hash, ruta y límites de la fuente.', 'Pasaje + página'),
         H('Presupuestos indoor/outdoor con Mercado Libre', 'done', 'h0', 'M', '8 productos por modo, precios editables, links e imágenes.', '16 items'),
-        H('PWA offline instalable', 'done', 'h0', 'M', 'Service worker + manifest + cache de assets.', 'Offline'),
+        H('PWA instalable con caché básica', 'done', 'h0', 'M', 'Manifest y service worker cachean la shell y assets; la lectura offline completa de biblioteca sigue pendiente.', 'Shell cacheada'),
         H('Accesibilidad AA base', 'done', 'h0', 'M', 'Skip link, foco visible, reduced motion, roles.', 'WCAG AA base'),
 
         H('Metadata automática: curso, módulo, año, idioma, conceptos', 'next', 'h1', 'M', 'Sugerir y dejar confirmar; nunca sobrescribir el original.', '10 campos'),
