@@ -1,5 +1,10 @@
 # HANDOFF
 
+## BOOT v7 — reanudación pausada (2026-11-08)
+- Fetch/censo: 9 ramas checkpoint y 7 resume. El checkpoint más reciente, `origin/opencode-checkpoints/11` (`cc5dc50`), se integró sin conflictos; `node --test` pasó 25/25 y `git diff --check` pasó.
+- Se preservaron todas las ramas remotas. `git merge origin/main` se abortó por conflictos en `00_cerebro_loop/{CEMETERY,HANDOFF,ROADMAP,TODO,USER_REQUESTS}.md` y `HANDOFF.md` raíz. No se resolvieron automáticamente.
+- Tag `pending-boot-v7-main-20261108` preserva el estado previo al merge. No se ejecutó navegador ni push; integración de main bloqueada a decisión humana.
+
 ## Cierre — BOOT v6 reintentado y pausado (2026-11-08)
 - Fetch y censo repetidos: 9 ramas `opencode-checkpoints/*` y 7 `opencode-resume/*`; no se borró ninguna referencia remota.
 - Se integró el tip actualizado `origin/opencode-checkpoints/11` (`1061d2c`) en el commit local `c58f11d`, sin conflictos. `node --test` pasó 25/25 y `git diff --check` pasó.
