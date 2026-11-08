@@ -11,6 +11,16 @@
 ## Próximo
 - Sin tareas de código pendientes. Reanudar con nuevos pedidos; si se solicita mantenimiento de issues, autenticar GitHub CLI y reevaluar el censo antes de actuar.
 
+## Cierre de arranque — 2026-11-08
+- Se leyó el SOP, README, HANDOFF, roadmap, TODO e inbox. No quedan tareas de usuario ni de roadmap; el mini-juego y H0 están completos.
+- Forensis del último cadáver accesible (#9): `origin/opencode-checkpoints/9` solo difiere de `origin/main` en metadatos de `.omgithub`; `origin/opencode-deployments/9` agrega/elimina metadatos y contiene tres scripts vacíos. No hay código funcional pendiente que rescatar. No se modificaron ni borraron ramas remotas. La revisión del thread y el censo de issues no se pudieron hacer: `gh auth status` confirma que no hay sesión.
+- `git fetch` detectó 5 commits locales y 4 remotos divergentes, con las diferencias de árbol limitadas a metadatos. Integración limpia de `origin/main` en la rama de trabajo, commit `d93578c`; sin conflictos ni cambios de código.
+- Gate posterior a la integración: `node --test` pasó; `node --check oracle-core.js`, `node --check game.js` y `git diff --check` pasaron. Chromium cargó la app con `document.readyState=complete` y consola sin errores antes de integrar; la integración solo incorporó el historial remoto y no cambió archivos de la app.
+- Estado al cierre: la rama local contiene `origin/main` como ancestro, pero aún no se publicó. No intentar publicar metadatos/conversación incidentalmente; se requiere autenticación y revisar el alcance de publicación. No se hicieron cambios ni limpiezas remotas.
+
+## Próximo
+- Esperar un nuevo pedido funcional. Para censo/cierre de issues o publicación, autenticar GitHub CLI y confirmar el alcance antes de actuar.
+
 ## Riesgos
-- El push a `main` debe ser fast-forward; nunca forzar. La autenticación de GitHub CLI no está disponible en este entorno.
+- La autenticación de GitHub CLI no está disponible; no se pudo consultar/cerrar issues ni validar permiso de push. Nunca forzar push.
 - Las referencias del fallback son coincidencias léxicas con recursos, no evidencia verificada del contenido de esos recursos.
