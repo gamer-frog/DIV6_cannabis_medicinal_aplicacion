@@ -28,6 +28,11 @@ Aplicación web personal, local-first y en español, orientada al estudio del ca
 
 ## Qué incluye
 
+### Bruma botánica
+- Juego casual de memoria de parejas en una página independiente, accesible desde el índice de Inicio.
+- Tres rondas, marcador, cronómetro, reinicio y feedback de victoria; controles nativos compatibles con teclado y diseño responsive.
+- Incluye iconografía botánica decorativa; no ofrece consejos médicos ni instrucciones de cultivo.
+
 ### Inicio
 - Índice sencillo tipo libro con accesos a las áreas de estudio y trabajo de Verde.
 - Búsqueda global con `⌘K` / `Ctrl+K` sobre sectores, cepas, cursos, recursos, roadmap y etiquetas.
@@ -100,6 +105,10 @@ Ejecutá `node --test` para correr las pruebas de simulación, escenarios y resp
 
 ```text
 index.html      Shell, nueve vistas, índice de inicio, modales y navegación
+bruma-botanica.html Página independiente del juego Bruma botánica
+bruma-botanica.css Estilos responsive y accesibles del juego
+bruma-botanica.js Estado, rondas, interacciones y cronómetro del juego
+bruma-core.js   Baraja y puntuación reutilizables con cobertura de tests
 styles.css      Sistema visual, shell, dashboard y componentes base
 views.css       Inicio, cepas, diario y simulador
 panels.css      Biblioteca, oráculo, costos, proceso, roadmap y responsive

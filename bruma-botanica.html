@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10150f">
+  <meta name="description" content="Bruma botánica: un juego de memoria de parejas para hacer una pausa entre hojas y flores.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230d110b'/%3E%3Cpath d='M8 23c1-8 6-12 16-14-1 8-6 12-16 14Z' fill='%23d8f26b'/%3E%3Cpath d='M9 24c4-6 8-9 13-11' stroke='%23516b32' stroke-width='1.4' fill='none'/%3E%3C/svg%3E">
+  <title>Bruma botánica · Verde</title>
+  <link rel="stylesheet" href="bruma-botanica.css">
+</head>
+<body>
+  <a class="skip-link" href="#tablero">Saltar al tablero</a>
+  <main class="game-shell">
+    <header class="topline">
+      <a class="back-link" href="index.html" aria-label="Volver a Verde"><span aria-hidden="true">←</span> Volver a Verde</a>
+      <span class="brand-mark" aria-hidden="true">v.</span>
+      <span class="top-note">UNA PAUSA VERDE</span>
+    </header>
+
+    <section class="intro" aria-labelledby="game-title">
+      <p class="eyebrow"><span></span> JUEGO DE MEMORIA · 3 RONDAS</p>
+      <h1 id="game-title">Bruma <em>botánica</em></h1>
+      <p class="intro-copy">Encontrá cada pareja entre hojas, flores y pequeños tesoros del jardín. Sin apuro: esta pausa es tuya.</p>
+    </section>
+
+    <section class="game-card" aria-label="Partida de Bruma botánica">
+      <div class="scoreboard" aria-label="Marcador de partida">
+        <div class="score-item round-stat"><span>RONDA</span><strong id="roundValue">1 <small>/ 3</small></strong></div>
+        <div class="score-item"><span>PUNTOS</span><strong id="scoreValue">000</strong></div>
+        <div class="score-item"><span>TIEMPO</span><strong id="timeValue">00:00</strong></div>
+        <div class="score-item"><span>PAREJAS</span><strong id="pairsValue">0 <small>/ 4</small></strong></div>
+      </div>
+
+      <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+      <div class="board-heading">
+        <p id="roundPrompt">Ronda 1 · El primer brote</p>
+        <button class="restart-button" id="restartButton" type="button"><span aria-hidden="true">↻</span> Reiniciar</button>
+      </div>
+
+      <div class="board" id="tablero" aria-label="Cartas de memoria"></div>
+      <p class="game-status" id="gameStatus" role="status" aria-live="polite">Elegí una carta para empezar.</p>
+      <div class="victory-panel" id="victoryPanel" hidden>
+        <div class="victory-sparkle" aria-hidden="true">✳</div>
+        <div><h2 id="victoryTitle">¡Qué buena cosecha!</h2><p id="victoryCopy">Completaste las tres rondas.</p></div>
+        <button class="play-again" id="playAgainButton" type="button">Jugar otra vez <span aria-hidden="true">↻</span></button>
+      </div>
+    </section>
+
+    <footer class="game-footer">
+      <span><i aria-hidden="true">✳</i> Un juego casual de Verde</span>
+      <span>Teclado: Tab para explorar · Enter o Espacio para elegir</span>
+    </footer>
+  </main>
+  <script src="bruma-core.js"></script>
+  <script src="bruma-botanica.js"></script>
+</body>
+</html>
