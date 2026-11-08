@@ -24,3 +24,17 @@
 ## Riesgos
 - La autenticación de GitHub CLI no está disponible; no se pudo consultar/cerrar issues ni validar permiso de push. Nunca forzar push.
 - Las referencias del fallback son coincidencias léxicas con recursos, no evidencia verificada del contenido de esos recursos.
+
+## Cierre de reanudación — 2026-11-08
+- Sin pedidos activos en el inbox ni subtareas abiertas en el roadmap; no se inventó un cambio funcional. Estado de trabajo limpio y `HEAD` conserva `origin/main` como ancestro (7 commits locales adelante, sin divergencia).
+- Gate repetido: `node --test` pasó 25/25; `node --check oracle-core.js`, `node --check game.js` y `git diff --check` pasaron.
+- Chromium estricto pasó en desktop (1440×900) y móvil (390×844), sin errores de página ni respuestas HTTP fallidas; ambas capturas se inspeccionaron visualmente: `/tmp/opencode/current-baseline/final-desktop.png` y `/tmp/opencode/current-baseline/final-mobile.png`. El puerto 3000 ya estaba ocupado, así que se inició la app del repositorio en el 4173 para asegurar que la vista correspondía a este árbol.
+- No se publicó: la diferencia heredada frente a `origin/main` aún incluye metadatos de checkpoint y conversación fuera del cambio funcional, y GitHub CLI sigue sin autenticar. No se modificaron ni borraron ramas remotas.
+
+## Próximo
+- Esperar un nuevo pedido funcional. Antes de publicar o gestionar issues, autenticar GitHub y revisar explícitamente el alcance de los metadatos locales.
+
+## Reporte de cierre
+- Hecho: baseline reproducible en tests y Chromium desktop/móvil; cola de usuario y roadmap vacía.
+- Siguiente: esperar un nuevo pedido; no iniciar mantenimiento artificial.
+- Riesgos: publicación/censo de issues bloqueados por autenticación y alcance de metadatos locales.
