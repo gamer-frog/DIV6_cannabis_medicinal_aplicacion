@@ -62,7 +62,7 @@ Aplicación web personal, local-first y en español, orientada al estudio del ca
 - Exportación del índice y de rutas de lectura a Markdown.
 
 ### Roadmap
-- Roadmap editable dentro de la app con **14 frentes y 222 hitos** (63 hechos, 27 en curso, 66 próximos y 66 de visión), 4 horizontes, métricas de progreso, riesgos y no-prioridades. Versión **v4.4 · noviembre de 2026**.
+- Roadmap editable dentro de la app con **14 frentes y 222 hitos** (63 hechos, 23 en curso, 70 próximos y 66 de visión), 4 horizontes, métricas de progreso, riesgos y no-prioridades. Versión **v4.4 · noviembre de 2026**.
 - La prioridad de desarrollo es primero la confiabilidad y la protección de datos; después, el simulador y las mejoras de experiencia.
 - Incluye análisis de 20 productos, 18 oportunidades y 12 brechas como material de referencia; son notas de producto, no integraciones.
 - Búsqueda, filtros y exportación completa a Markdown. El progreso de hitos se calcula desde los estados del roadmap.

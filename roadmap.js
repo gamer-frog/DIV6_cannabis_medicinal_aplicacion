@@ -394,7 +394,7 @@ window.ROADMAP = {
         H('Estados vacíos y errores explicativos', 'now', 'h1', 'S', 'Cada vacío dice qué hacer y por qué.', '100% cubiertos'),
         H('Temas claro/oscuro con el verde como acento', 'next', 'h1', 'M', 'Mantener contraste AA.', '2 temas'),
         H('Accesibilidad AA y navegación completa por teclado', 'next', 'h1', 'M', 'Foco visible, roles y anuncios.', 'WCAG AA'),
-        H('Preferencia de movimiento reducido', 'next', 'h1', 'S', 'Respetar reduced motion en glow, timelapse y transiciones.', '1 media query'),
+        H('Preferencia de movimiento reducido', 'done', 'h1', 'S', 'Respetar reduced motion en glow, timelapse y transiciones.', '1 media query'),
         H('Internacionalización es/en/pt', 'next', 'h2', 'L', 'Textos, fechas, monedas y unidades.', '3 idiomas'),
         H('PWA instalable y offline', 'next', 'h2', 'M', 'Batch y biblioteca disponibles sin red.', 'Offline'),
         H('Modo presentación para clases y demos', 'later', 'h3', 'M', 'Timelapse a pantalla completa con narración.', '1 pantalla'),
