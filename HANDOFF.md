@@ -3,7 +3,7 @@
 ## Estado al 2026-11-08
 - Pedido [A] terminado: “Bruma botánica”, mini-juego independiente enlazado desde Inicio, con tres rondas, marcador, cronómetro, reinicio, victoria y controles de teclado accesibles.
 - Verificación funcional previa: Chromium desktop y móvil (390 px), sin errores de consola/red ni desbordamiento horizontal. Capturas JPEG generadas e inspeccionadas: `/tmp/opencode/bruma-victoria.jpg` y `/tmp/opencode/bruma-movil.jpg`.
-- Sincronización de arranque: `HEAD` y `origin/main` coincidían en `c802516`; árbol limpio. `node --test` pasó 21/21, `node --check` y `git diff --check` pasaron.
+- Verificación de arranque actual (2026-11-08): `HEAD` y `origin/main` coinciden en `8a01957`; árbol limpio. `node --test` pasó 21/21 y `git diff --check` pasó. La sincronización inicial del trabajo del juego fue en `c802516`.
 - `roadmap/juego.md` y `user-requests.md` cerrados; README actualizado. Repositorio estático, sin paso de build separado.
 
 ## Mantenimiento de issues (censo/forensis)
