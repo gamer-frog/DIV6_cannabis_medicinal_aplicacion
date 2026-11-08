@@ -1435,7 +1435,7 @@
       <div class="strain-card-media">
         <img src="${st.image}" alt="${esc(st.name)}" loading="lazy" />
         <div class="strain-card-badges"><span class="strain-badge thc">${st.thc}% THC</span><span class="strain-badge cat">${esc(CAT_LABEL[cat])}</span></div>
-        <div class="strain-card-name"><b>${esc(st.name)}</b><small>${esc(st.type)} · ${st.flower} días</small></div>
+        <div class="strain-card-name"><b>${esc(st.name)}</b><small>${esc(st?.type || 'Tipo no especificado')} · ${st.flower} días</small></div>
       </div>
       <div class="strain-card-body">
         <div class="strain-effects">${st.effects.slice(0, 2).map(e => `<span>${esc(e)}</span>`).join('')}</div>
@@ -1579,7 +1579,7 @@
     app.selectedStrain = id;
     $('#strainSheet').innerHTML = `
       <div class="strain-sheet-hero"><img src="${st.image}" alt="${esc(st.name)}" /><button class="strain-sheet-close" data-close-sheet aria-label="Cerrar">×</button>
-        <div class="strain-sheet-title"><div><h2>${esc(st.name)}</h2><small>${esc(st.type)} · ${esc(st.lineage)}</small></div><div class="strain-sheet-thc"><b>${st.thc}%</b><span>THC · ${st.cbd}% CBD</span></div></div>
+        <div class="strain-sheet-title"><div><h2>${esc(st.name)}</h2><small>${esc(st?.type || 'Tipo no especificado')} · ${esc(st.lineage)}</small></div><div class="strain-sheet-thc"><b>${st.thc}%</b><span>THC · ${st.cbd}% CBD</span></div></div>
       </div>
       <div class="strain-sheet-body">
         <div>
@@ -2317,7 +2317,8 @@
         if (status) status.textContent = 'Elegí un archivo PDF antes de continuar.';
         return;
       }
-      if (!/\.pdf$/i.test(file.name) || (file.type && file.type !== 'application/pdf')) {
+      const fileType = file?.type;
+      if (!/\.pdf$/i.test(file.name) || (fileType && fileType !== 'application/pdf')) {
         if (status) status.textContent = 'El archivo no parece ser un PDF. Elegí un archivo .pdf válido.';
         return;
       }
@@ -2826,8 +2827,15 @@
   function closeModal(id) { $('#' + id)?.classList.remove('open'); }
 
   /* ---------- búsqueda global (⌘K) ---------- */
-  const COMMAND_TYPE = { view: 'SECTOR', course: 'CURSO', strain: 'CEPA', pdf: 'PDF', roadmap: 'ROADMAP', tag: 'TAG' };
-  const COMMAND_PRIORITY = { view: 0, course: 1, strain: 2, pdf: 3, roadmap: 4, tag: 5 };
+  const COMMAND_TYPE = { view: 'SECTOR', course: 'CURSO', strain: 'CEPA', pdf: 'PDF', roadmap: 'ROADMAP', tag: 'TAG', unknown: 'OTRO' };
+  const COMMAND_PRIORITY = { view: 0, course: 1, strain: 2, pdf: 3, roadmap: 4, tag: 5, unknown: 99 };
+  function commandType(entry) {
+    const type = entry?.type;
+    return Object.prototype.hasOwnProperty.call(COMMAND_TYPE, type) ? type : 'unknown';
+  }
+  function commandPriority(entry) {
+    return COMMAND_PRIORITY[commandType(entry)];
+  }
   let commandVisible = [];
   let commandIndex = 0;
 
@@ -2879,7 +2887,7 @@
     const hay = norm(`${entry.label} ${entry.meta || ''} ${entry.keywords || ''}`);
     const words = q.split(/\s+/).filter(Boolean);
     if (!words.every(w => hay.includes(w))) return -1;
-    let score = COMMAND_PRIORITY[entry.type] === 0 ? 4 : 0;
+    let score = commandPriority(entry) === 0 ? 4 : 0;
     if (label === q) score += 100;
     else if (label.startsWith(q)) score += 55;
     else if (label.includes(q)) score += 28;
@@ -2892,7 +2900,7 @@
     const scored = commandEntries()
       .map((e, i) => ({ ...e, i, score: commandScore(e, q) }))
       .filter(e => e.score >= 0)
-      .sort((a, b) => b.score - a.score || COMMAND_PRIORITY[a.type] - COMMAND_PRIORITY[b.type] || a.i - b.i);
+      .sort((a, b) => b.score - a.score || commandPriority(a) - commandPriority(b) || a.i - b.i);
     const total = scored.length;
     commandVisible = scored.slice(0, 24);
     commandIndex = 0;
@@ -2900,7 +2908,7 @@
     if (!box) return;
     box.innerHTML = commandVisible.length ? commandVisible.map((e, i) => `
       <button class="cmd-row ${i === 0 ? 'active' : ''}" data-cmd-index="${i}" role="option" aria-selected="${i === 0}">
-        <span class="cmd-type cmd-type-${e.type}">${COMMAND_TYPE[e.type]}</span>
+        <span class="cmd-type cmd-type-${commandType(e)}">${COMMAND_TYPE[commandType(e)]}</span>
         <span class="cmd-copy"><b>${esc(e.label)}</b><small>${esc(e.meta || '')}</small></span>
         <span class="cmd-go" aria-hidden="true">↵</span>
       </button>`).join('') : `<div class="cmd-empty"><b>Sin resultados</b><span>Probá con “riego”, “floración”, “Gelato”, “roadmap” o “biblioteca”.</span></div>`;
