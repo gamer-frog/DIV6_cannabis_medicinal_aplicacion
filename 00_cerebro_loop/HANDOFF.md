@@ -1,5 +1,13 @@
 # HANDOFF
 
+## Cierre — BOOT v6 pausado (2026-11-08)
+- Fetch y censo: 9 ramas checkpoint y 7 resume. El checkpoint más reciente, `/11` (`4aeb58b`), se integró sin conflictos en el merge `5c78f74`.
+- Baseline posterior: `node --test` pasó 25/25; `git diff --check` pasó.
+- No se borraron ramas remotas porque el SOP exige preservar referencias con trabajo exclusivo; se mantienen los tags locales `graveyard-*` existentes.
+- El merge con `origin/main` se abortó por conflictos de memoria en `00_cerebro_loop/{CEMETERY,HANDOFF,ROADMAP,TODO,USER_REQUESTS}.md` y `HANDOFF.md` raíz. No se resolvieron. `pending-boot-v6` señala `5c78f74`.
+- Al intentar el merge desde `5c78f74`, había 22 commits exclusivos locales y 9 en `origin/main`; el commit documental de cierre posterior sigue local. Sin publicación, sin actualización de `save-000` y sin prueba de navegador post-merge. El censo de issues no se pudo ejecutar: `gh` no tiene `GH_TOKEN` en este entorno.
+- Siguiente: integración autorizada de la memoria; mantener intactas las ramas remotas hasta verificar cuáles pueden compostarse con seguridad.
+
 ## Cierre — BOOT seguro (2026-11-08)
 - Paso 1: `git fetch origin` y censo completados: 9 ramas `opencode-checkpoints/*` y 7 `opencode-resume/*`.
 - Paso 2: inicializada y leída `00_cerebro_loop/` (HANDOFF, ROADMAP, TODO, USER_REQUESTS y CEMETERY). El tag `save-000` ya existe.

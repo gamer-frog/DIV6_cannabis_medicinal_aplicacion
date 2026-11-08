@@ -1,5 +1,13 @@
 # HANDOFF
 
+## Cierre — BOOT v6 pausado por conflicto (2026-11-08)
+- `git fetch origin` encontró 9 ramas `opencode-checkpoints/*` y 7 `opencode-resume/*`; se leyó `00_cerebro_loop/` y la documentación de arranque.
+- Se integró `origin/opencode-checkpoints/11` (`4aeb58b`) sin conflictos mediante merge `5c78f74`; `node --test` pasó 25/25 y `git diff --check` pasó.
+- No se borraron ramas remotas: varias conservan historia exclusiva y el SOP prohíbe podarlas sin compost seguro. Se mantienen los tags `graveyard-*` ya verificados.
+- `git merge origin/main` se abortó por conflictos en los seis archivos de memoria (`00_cerebro_loop/{CEMETERY,HANDOFF,ROADMAP,TODO,USER_REQUESTS}.md` y `HANDOFF.md` raíz). No se resolvieron automáticamente ni manualmente. Tag local `pending-boot-v6` apunta al estado pausado `5c78f74`.
+- Al intentar el merge desde `5c78f74`, había 22 commits exclusivos locales y 9 remotos. El commit documental de cierre posterior quedó local; no se publicó ni actualizó `save-000`. No se ejecutó navegador tras el conflicto. `gh issue list` no pudo autenticarse en GitHub Actions.
+- Siguiente: decidir cómo integrar la memoria divergente en un contexto autorizado; preservar ramas remotas hasta confirmar compost seguro.
+
 ## Cierre — movimiento reducido (2026-11-08)
 - Hito «Preferencia de movimiento reducido» marcado como hecho en `roadmap.js`; el README refleja los conteos de estados del archivo: 63 hechos, 23 en curso, 70 próximos y 66 de visión.
 - Chromium confirmó `prefers-reduced-motion: reduce` en Verde y Bruma botánica: `scroll-behavior: auto`, transiciones de `1e-05s` y, en Bruma, animación de `1e-05s` con una iteración. Ambas páginas cargaron completas sin errores de consola ni de red.
