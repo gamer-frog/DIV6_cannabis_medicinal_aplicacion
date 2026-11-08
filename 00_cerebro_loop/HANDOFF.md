@@ -10,3 +10,9 @@
 - Publicación bloqueada con seguridad: HEAD `585a0a7` y `origin/main` `607f219` divergen (9 commits solo en main y 15 solo en HEAD); difieren también el historial de HANDOFF, metadatos `.omgithub` y `tests/reduced-motion.test.js`. No hacer push ni crear otro `save-*` desde este checkout.
 - Árbol al cierre: únicamente `00_cerebro_loop/` sin seguimiento, creado para este BOOT. No se modificaron ni borraron ramas remotas.
 - Siguiente paso: resolver la divergencia en un contexto autorizado y separado antes de cualquier integración/publicación; mantener intactas las ramas históricas mientras no se confirme cuáles son prescindibles.
+
+## En progreso — BOOT v5 (2026-11-08)
+- Fetch y censo: 9 ramas checkpoint y 7 resume. El último checkpoint, `/11` (`bf19fad`), se integró por fast-forward; `node --test` pasó 25/25 y `git diff --check` pasó.
+- Se crearon y verificaron tags locales `graveyard-*` para los 16 tips antes de la limpieza solicitada. No se borran ramas remotas: el SOP exige preservar referencias con trabajo exclusivo y no autoriza esta poda masiva.
+- La integración pendiente con `origin/main` conserva una divergencia de 9 commits remotos frente a 18 locales antes de este registro. Tras commitear esta memoria se intentará el merge; ante conflicto, el SOP manda abortar, etiquetar y pedir decisión, sin resolver manualmente.
+- `git merge origin/main` intentado tras commit `e3bc1cc`; conflicto add/add en los cinco archivos de memoria de `00_cerebro_loop/` y conflicto de contenido en `HANDOFF.md` raíz. Se abortó según el SOP local y se creó tag `pending-boot-v5` en `e3bc1cc`. No se resolvieron conflictos, no se verificó navegador y no se hizo push ni se actualizó `save-000`. Divergencia al cierre: `origin/main` tiene 9 commits y HEAD 19 commits exclusivos.
