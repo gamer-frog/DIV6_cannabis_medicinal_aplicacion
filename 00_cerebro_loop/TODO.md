@@ -1,5 +1,6 @@
 # TODO / bloqueos
 
+- BOOT v8: integrar `origin/main` quedó bloqueado por conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. `pending-boot-v8-main-20261108` preserva el estado; no resolver automáticamente ni publicar desde este checkout hasta recibir decisión humana.
 - BOOT v7: el merge de `origin/main` se abortó por conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. `pending-boot-v7-main-20261108` preserva el estado; no resolver automáticamente ni publicar desde este checkout.
 
 - Resolver la divergencia desde `c58f11d` frente a `origin/main` en un contexto autorizado: el reintento posterior a integrar el tip actualizado de checkpoint/11 se abortó por conflictos en seis archivos de memoria. `pending-boot-v6-main-20261108` preserva el estado. No resolver automáticamente ni publicar desde este checkout.

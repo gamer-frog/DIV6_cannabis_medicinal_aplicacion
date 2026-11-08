@@ -1,5 +1,11 @@
 # HANDOFF
 
+## BOOT v8 — pausado por conflictos en origin/main (2026-11-08)
+- Fetch y censo: 9 ramas `opencode-checkpoints/*` y 7 `opencode-resume/*`; no se borró ninguna referencia remota.
+- Se integró `origin/opencode-checkpoints/11` (`01f772a`) sin conflictos. `node --test` pasó 25/25 y `git diff --check` pasó.
+- `git merge origin/main` se abortó por conflictos en cinco archivos de `00_cerebro_loop/` y `HANDOFF.md` raíz. No se resolvieron; `pending-boot-v8-main-20261108` preserva el estado posterior a absorber el checkpoint y anterior al merge.
+- La divergencia es 9 commits remotos y 32 locales; no se ejecutó navegador ni publicación. La integración requiere decisión humana y `gh` no está autenticado.
+
 ## BOOT v7 — pausado por conflictos en origin/main (2026-11-08)
 - Fetch y censo: 9 ramas `opencode-checkpoints/*` y 7 `opencode-resume/*`; no se borró ninguna referencia remota.
 - Se integró `origin/opencode-checkpoints/11` (`cc5dc50`) sin conflictos. `node --test` pasó 25/25 y `git diff --check` pasó.
