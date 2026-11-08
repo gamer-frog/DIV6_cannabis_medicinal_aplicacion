@@ -7,8 +7,12 @@
 - Sincronización: `origin/main` coincide con HEAD (`272228c`); los cambios de esta tarea siguen en el árbol de trabajo, sin conflictos. `git diff --check` pasó.
 - `roadmap/juego.md` y `user-requests.md` cerrados; README actualizado. Repositorio estático, sin paso de build separado.
 
+## Cierre
+- Commit atómico `c192829` (`feat(game): add Bruma botánica memory game`) creado y publicado con push fast-forward a `origin/main`.
+- Build/test final: `node --test` pasó 21/21; `git diff --check` pasó. La captura de victoria y la móvil fueron inspeccionadas en la verificación de Chromium.
+
 ## Próximo
-- Crear commit atómico de la tarea, intentar push fast-forward a `main` según SOP y reportar el resultado.
+- No hay trabajo pendiente de este pedido; esperar la siguiente tarea.
 
 ## Riesgos
 - El push a `main` podría no estar autorizado en este entorno; no se forzará. El censo/cierre de issues no se pudo consultar en el arranque por falta de `GH_TOKEN`.
