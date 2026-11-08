@@ -4,7 +4,7 @@
 - Se inventariaron los accesos `.type` en fuentes (`*.js`, `*.jsx`, `*.ts`, `*.tsx`, `*.html`); el único acceso no relacionado con objetos opcionales es la asignación `button.type = 'button'` en `bruma-botanica.js`.
 - `game.js` usa fallback al presentar `st?.type`, captura `file?.type` antes de validarlo y resuelve tipo/prioridad de comandos mediante guards con valor `unknown` seguro.
 - Verificación: `node --test` 25/25, `node --check game.js`, `node --check bruma-botanica.js`, `git diff --check`; Chromium real probó navegación y búsqueda global `cepa`, resultados presentes, sin marcado `undefined` y consola/página sin errores ni warnings.
-- No se integró ni publicó: HEAD `2ff1070` está grafted en este checkout sin merge-base disponible hacia `origin/main` (conteo 1/32); el historial documenta conflictos de integración y `gh auth status` no tiene sesión. No resolver ni publicar hasta recuperar una base/integración segura y autenticación.
+- Checkpoint local: commit `c9c06b1` (`fix(search): guard optional .type accesses [anti-typeerror]`). No se integró ni publicó: desde ese commit no hay merge-base disponible hacia `origin/main` (conteo 2/32 tras `git fetch`); el historial documenta conflictos de integración y `gh auth status` no tiene sesión. No resolver ni publicar hasta recuperar una base/integración segura y autenticación.
 
 ## BOOT v9 — pausado por conflictos en origin/main (2026-11-08)
 - Fetch/censo completado: 9 ramas checkpoint y 7 resume; se integró `origin/opencode-checkpoints/11` (`2aca086`) sin conflictos. `node --test` pasó 25/25 y `git diff --check` pasó.
