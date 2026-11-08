@@ -2415,31 +2415,11 @@
   }
 
   function scoreKnowledge(question) {
-    const q = norm(question);
-    let best = null, bestScore = 0;
-    window.ORACLE_KB.forEach(entry => {
-      let score = 0;
-      entry.match.forEach(m => {
-        const key = norm(m);
-        if (q.includes(key)) score += key.length + 2;
-      });
-      entry.tags.forEach(t => { if (q.includes(norm(t))) score += 3; });
-      if (score > bestScore) { bestScore = score; best = entry; }
-    });
-    return { entry: best, score: bestScore };
+    return window.OracleCore.scoreKnowledge(question, window.ORACLE_KB || []);
   }
 
   function libraryFallback(question) {
-    const q = norm(question);
-    return allResources()
-      .map(r => {
-        const hay = norm([r.title, r.summary, (r.tags || []).join(' '), r.diploma, r.module].join(' '));
-        let score = 1;
-        q.split(/\s+/).filter(w => w.length > 4).forEach(w => { if (hay.includes(w)) score += 2; });
-        return { id: r.id, score, title: r.title };
-      })
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 4);
+    return window.OracleCore.libraryFallback(question, allResources());
   }
 
   function askOracle(question) {
@@ -2477,8 +2457,8 @@
           html = `<p>No tengo una respuesta específica para esa formulación, pero encontré material relacionado en tu biblioteca. Los recursos más cercanos son <b>${found.slice(0, 3).map(f => esc(f.title)).join('</b>, <b>')}</b>. Probá preguntar por <b>riego, nutrición, ambiente, cosecha, costos o marco legal</b> para obtener una respuesta con fragmento.</p>`;
           sources = found.filter(f => f.score > 1);
         } else {
-          html = '<p>No encontré coincidencias suficientes en la biblioteca indexada. Probá con una pregunta más concreta: <b>riego y pH</b>, <b>VPD en floración</b>, <b>secado y curado</b>, <b>costo por gramo</b> o <b>marco legal</b>.</p>';
-          sources = allResources().slice(0, 3).map((r, i) => ({ id: r.id, score: 60 - i * 6 }));
+          html = '<p>No encontré recursos pertinentes para esta consulta en la biblioteca indexada. Probá con un tema más concreto, como <b>riego y pH</b>, <b>VPD en floración</b>, <b>secado y curado</b>, <b>costo por gramo</b> o <b>marco legal</b>.</p>';
+          sources = [];
         }
       }
       app.chat.push({ role: 'assistant', html });

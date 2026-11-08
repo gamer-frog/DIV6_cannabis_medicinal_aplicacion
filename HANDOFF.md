@@ -1,24 +1,16 @@
 # HANDOFF
 
-## Estado al 2026-11-08
-- Pedido [A] terminado: “Bruma botánica”, mini-juego independiente enlazado desde Inicio, con tres rondas, marcador, cronómetro, reinicio, victoria y controles de teclado accesibles.
-- Verificación funcional previa: Chromium desktop y móvil (390 px), sin errores de consola/red ni desbordamiento horizontal. Capturas JPEG generadas e inspeccionadas: `/tmp/opencode/bruma-victoria.jpg` y `/tmp/opencode/bruma-movil.jpg`.
-- Verificación de arranque actual (2026-11-08): `HEAD` y `origin/main` coinciden en `c43c547`; árbol limpio. `node --test` pasó 21/21; `node --check` y `git diff --check` pasaron. La sincronización inicial del trabajo del juego fue en `c802516`.
-- `roadmap/juego.md` y `user-requests.md` cerrados; README actualizado. Repositorio estático, sin paso de build separado.
-
-## Mantenimiento de issues (censo/forensis)
-- Censo público REST: 8 issues abiertos en total; 7 excluyendo el issue actual (#8). Ordenados de más nuevos a más antiguos: #7, #6, #5, #4, #3, #2, #1. La CLI `gh` no tiene sesión autenticada, por lo que no se pudieron comentar ni cerrar issues.
-- Últimas tres líneas de prompts, excluyendo #8: (#7/#6) roadmap; (#5) fusionar ramas y explicar OpenRouter; (#4/#3) roadmap. #1/#2 quedan fuera de cota y no se leyeron.
-- Forensis resumida: #7 sin diferencia de código; #6 solo metadatos de checkpoint; #5 cambios en `game.js`/`index.html`; #4 añade trabajo de simulador, persistencia, escenarios y tests; #3 añade importación PDF, persistencia y tests, y el thread registra fallo de build. Los handoffs disponibles no contienen Work State/Next Move de esas sesiones. En todos los threads revisados solo hay comentarios automáticos de GitHub, sin comentarios del agente; por SOP se ignoran como abandono intencional y no se compostan ni sepultan. No se modificaron ramas.
-- El censo es de solo lectura y no se realizaron acciones remotas; queda pendiente autenticación para cualquier mantenimiento remoto futuro. Al superar dos issues abiertos se ejecutó el mini-funeral limitado al censo/forensis, sin compost de ramas.
-
-## Cierre
-- Juego publicado previamente en `main` mediante los commits `c192829` y `c802516`.
-- Esta sesión solo actualiza el handoff con el estado verificado y el censo/forensis; no hay cambios de código pendientes.
+## Cierre — 2026-11-08
+- Pedido [A] terminado: “Bruma botánica”, mini-juego independiente enlazado desde Inicio, con tres rondas, marcador, cronómetro, reinicio, victoria y controles de teclado accesibles. Chromium desktop y móvil (390 px) verificados; capturas JPEG inspeccionadas: `/tmp/opencode/bruma-victoria.jpg` y `/tmp/opencode/bruma-movil.jpg`.
+- Hito H0 del Oráculo terminado: la búsqueda léxica usa límites de palabra, filtra recursos no relacionados y responde que no encontró recursos pertinentes cuando no hay coincidencias, sin adjuntar fuentes arbitrarias. El comportamiento no se presenta como medición de alucinaciones; una coincidencia léxica tampoco prueba que el recurso respalde la respuesta.
+- La primera prueba visual agotó el timeout porque esperaba el título literal “Riego: menos es más”, que no forma parte del texto emitido. La comprobación directa confirmó que «¿Cómo afecta el riego?» sí muestra la respuesta esperada y sus tres recursos.
+- Verificación final del Oráculo: `node --test` pasó 25/25; `node --check oracle-core.js`, `node --check game.js` y `git diff --check` pasaron. Chromium desktop: consultas sin coincidencias (0 fuentes), respuesta de riego (3 fuentes) y fallback léxico de «prevención» (2 fuentes), sin errores de consola/red. Capturas JPEG inspeccionadas: `/tmp/opencode/oraculo-sin-coincidencias.jpg`, `/tmp/opencode/oraculo-coincidencia.jpg` y `/tmp/opencode/oraculo-fallback-lexico.jpg`.
+- Cambios H0: `oracle-core.js`, `tests/oracle-core.test.js`, `game.js`, `index.html`, `sw.js`, `roadmap.js` y README; el roadmap marca el modo «no sé» como hecho y la documentación aclara el límite de las referencias léxicas.
+- Baseline de esta tarea: `HEAD` = `origin/main` = `d8c2e44`; `save-000` disponible. Rama de trabajo `opencode/42488451146`. `gh auth status` informa que no hay sesión autenticada; por eso no se pudieron comentar ni cerrar issues. El censo anterior registró 8 abiertos (7 excluyendo el issue #8); requiere autenticación para volver a evaluarlo y mantenerlos.
 
 ## Próximo
-- Esperar la siguiente tarea. Si se retoma el mantenimiento de issues, autenticar `gh` y reevaluar el censo antes de actuar.
+- Sin tareas de código pendientes. Reanudar con nuevos pedidos; si se solicita mantenimiento de issues, autenticar GitHub CLI y reevaluar el censo antes de actuar.
 
 ## Riesgos
-- El push a `main` debe seguir siendo fast-forward; nunca forzar. La autenticación de GitHub CLI no está disponible en este entorno.
-- Autocrítica: los recursos externos de Google Fonts pueden no cargar sin conexión; el juego tiene fuentes del sistema como fallback y sus recursos funcionales son locales.
+- El push a `main` debe ser fast-forward; nunca forzar. La autenticación de GitHub CLI no está disponible en este entorno.
+- Las referencias del fallback son coincidencias léxicas con recursos, no evidencia verificada del contenido de esos recursos.

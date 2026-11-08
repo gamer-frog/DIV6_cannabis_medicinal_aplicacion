@@ -70,8 +70,8 @@ Aplicación web personal, local-first y en español, orientada al estudio del ca
 
 ### Oráculo
 - Respuestas locales basadas en una base de conocimiento y en los recursos indexados.
-- Citas con diplomatura, módulo, identificador y ruta.
-- Sugerencias de consulta y panel de fuentes navegable.
+- Si no encuentra recursos pertinentes, lo indica y no muestra fuentes arbitrarias; para consultas relacionadas sin respuesta específica, ofrece recursos coincidentes léxicamente.
+- Citas y panel navegable con diplomatura, módulo, identificador y ruta. La relación léxica de un recurso no demuestra que su contenido respalde una respuesta.
 - Aviso legal explícito en preguntas de normativa.
 
 ### Costos
@@ -128,7 +128,7 @@ md/README.md    Convenciones previstas para Markdown derivado
 
 - El índice de biblioteca y las diplomaturas son un **dataset demo** pensado para mostrar procedencia, duplicados y citas. El repositorio no contiene PDFs originales ni Markdown de cursos; `pdf/` y `md/` documentan la estructura prevista. Los archivos que aporte el usuario se conservan localmente en IndexedDB, no se incorporan al repositorio.
 - El alta de PDFs extrae texto en el navegador y genera Markdown descargable; el original y el texto extraído se guardan en IndexedDB. La búsqueda semántica no está implementada.
-- El oráculo es una **heurística local**: no envía documentos a terceros y no es un modelo generativo. Sus respuestas citan recursos del índice.
+- El oráculo es una **heurística local**: no envía documentos a terceros y no es un modelo generativo. Las respuestas predefinidas enlazan recursos configurados y el fallback busca coincidencias léxicas en el índice; una relación no verifica que el pasaje respalde la respuesta.
 - Las fotografías son imágenes de Unsplash incorporadas como material de demostración. No se copiaron assets, marcas ni interfaces de Leafly, Weedmaps, GrowDiaries u otras apps comerciales; el diseño se inspira en patrones de producto (explorador de cepas, diario, ficha de recurso) sin reproducir su identidad visual.
 - Los perfiles de cepas son síntesis educativas de referencia. No reemplazan la ficha del banco de semillas.
 

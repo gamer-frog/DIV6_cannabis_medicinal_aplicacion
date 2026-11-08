@@ -342,7 +342,7 @@ window.ROADMAP = {
         H('Respuestas locales con referencias a recursos', 'done', 'h0', 'M', 'La búsqueda por palabras enlaza recursos relacionados; no verifica pasajes y una referencia de fallback puede no respaldar la respuesta.', 'Relevancia por evaluar'),
         H('Panel de recursos relacionados con la respuesta', 'done', 'h0', 'S', 'Permite abrir la ficha del recurso; la relación no garantiza que contenga evidencia de la respuesta.', 'Referencias navegables'),
         H('Aviso legal explícito en normativa', 'done', 'h0', 'S', 'No reemplaza asesoramiento profesional.', 'Siempre'),
-        H('Modo “no sé”: reconocer consultas sin coincidencias', 'now', 'h0', 'S', 'Reducir respuestas cuando la búsqueda léxica no encuentra recursos pertinentes; no equivale a medir alucinaciones.', 'Evaluación pendiente'),
+        H('Modo “no sé”: reconocer consultas sin coincidencias', 'done', 'h0', 'S', 'Reduce la respuesta si no encuentra recursos pertinentes y evita mostrar fuentes arbitrarias; la prueba léxica no mide alucinaciones.', '25 tests · 3 rutas visuales'),
         H('Puntaje de confianza por respuesta', 'now', 'h1', 'M', 'Mostrar cuántas fuentes sostienen la respuesta y cuán recientes son.', '0–100'),
         H('Preguntas sugeridas según el batch actual', 'next', 'h1', 'S', '“Tu VPD está alto: ¿qué dice tu biblioteca?”', 'Contextual'),
         H('Respuestas con fragmento textual y contexto', 'next', 'h1', 'L', 'Recuperar pasajes pertinentes desde documentos procesados y mostrar contexto verificable.', 'Pasaje + página + evaluación'),

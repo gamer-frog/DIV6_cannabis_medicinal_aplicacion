@@ -1,5 +1,5 @@
-const CACHE = 'verde-v4.8';
-const ASSETS = ['./', './index.html', './styles.css', './views.css', './panels.css', './verde-v3.css', './game.js', './simulator-core.js', './scenario-core.js', './backup-core.js', './library.js', './strains.js', './roadmap.js', './bruma-botanica.html', './bruma-botanica.css', './bruma-core.js', './bruma-botanica.js', './manifest.webmanifest'];
+const CACHE = 'verde-v4.9';
+const ASSETS = ['./', './index.html', './styles.css', './views.css', './panels.css', './verde-v3.css', './game.js', './simulator-core.js', './scenario-core.js', './backup-core.js', './oracle-core.js', './library.js', './strains.js', './roadmap.js', './bruma-botanica.html', './bruma-botanica.css', './bruma-core.js', './bruma-botanica.js', './manifest.webmanifest'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(() => {})); self.skipWaiting(); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))); self.clients.claim(); });
 self.addEventListener('fetch', (e) => {
