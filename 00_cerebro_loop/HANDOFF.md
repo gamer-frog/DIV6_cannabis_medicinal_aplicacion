@@ -1,5 +1,11 @@
 # HANDOFF
 
+## Reintento BOOT v6 — pausado por conflictos (2026-11-08)
+- Fetch y censo: 9 ramas checkpoint y 7 resume; no se borraron ramas remotas.
+- Se integró `origin/opencode-checkpoints/11` (`1061d2c`) en `c58f11d` sin conflictos. `node --test` pasó 25/25 y `git diff --check` pasó.
+- El merge de `origin/main` volvió a encontrar conflictos en los seis archivos de memoria y se abortó sin resolverlos. `pending-boot-v6-main-20261108` conserva el HEAD previo. No se ejecutó navegador ni publicación.
+- Requiere decisión humana para integrar la memoria divergente.
+
 ## Cierre — BOOT v6 pausado (2026-11-08)
 - Fetch y censo: 9 ramas checkpoint y 7 resume. El checkpoint más reciente, `/11` (`4aeb58b`), se integró sin conflictos en el merge `5c78f74`.
 - Baseline posterior: `node --test` pasó 25/25; `git diff --check` pasó.
