@@ -1,5 +1,10 @@
 # HANDOFF
 
+## BOOT v9 — pausado por conflictos en origin/main (2026-11-08)
+- Fetch/censo: 9 ramas checkpoint y 7 resume; integré el tip `origin/opencode-checkpoints/11` (`2aca086`) sin conflictos. Tests 25/25 y `git diff --check` verdes.
+- Se preservaron las 16 ramas remotas. El merge de `origin/main` se abortó sin resolver conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. `pending-boot-v9-20261108` preserva el HEAD.
+- No se ejecutó el navegador ni hubo publicación; divergencia 9/35. Se mantuvo `AGENTS.md` según el SOP activo.
+
 ## BOOT v8 — pausado por conflictos en origin/main (2026-11-08)
 - Fetch y censo: 9 ramas `opencode-checkpoints/*` y 7 `opencode-resume/*`; no se borró ninguna referencia remota.
 - Se integró `origin/opencode-checkpoints/11` (`01f772a`) sin conflictos. `node --test` pasó 25/25 y `git diff --check` pasó.
