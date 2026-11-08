@@ -1,5 +1,11 @@
 # HANDOFF
 
+## BOOT v10 — pausado por conflictos en origin/main (2026-11-08)
+- Fetch y lectura de los cinco archivos de `00_cerebro_loop/` completados. Integré `origin/opencode-checkpoints/11` (`664e952`) sin conflictos mediante merge `376c673`; `node --test` pasó 25/25 y `git diff --check` está limpio.
+- `git merge origin/main` volvió a fallar en los cinco archivos de memoria de `00_cerebro_loop/` y `HANDOFF.md` raíz. Aborté sin resolver conflictos, según el SOP, y `pending-boot-v10-main-20261108` preserva el HEAD.
+- Se preservaron todas las ramas remotas: no se confirmó que fueran compostables y el SOP no autoriza la poda masiva. No se verificó navegador, no se publicó y no se creó `save-*` porque no hubo integración exitosa con `origin/main`.
+- Se mantiene `AGENTS.md` sin copiar instrucciones que contradigan el SOP vigente. Próximo paso: revisión/autorización humana para reconciliar la memoria divergente; luego verificar navegador y sincronizar/publicar.
+
 ## BOOT v9 — pausado por conflictos en origin/main (2026-11-08)
 - Fetch/censo: 9 ramas checkpoint y 7 resume; integré el tip `origin/opencode-checkpoints/11` (`2aca086`) sin conflictos. Tests 25/25 y `git diff --check` verdes.
 - Se preservaron las 16 ramas remotas. El merge de `origin/main` se abortó sin resolver conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. `pending-boot-v9-20261108` preserva el HEAD.

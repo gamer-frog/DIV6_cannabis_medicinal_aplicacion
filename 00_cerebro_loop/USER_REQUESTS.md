@@ -1,5 +1,6 @@
 # Pedidos del usuario
 
+- [ ] BOOT v10: integrado checkpoint/11 (`664e952`), pero `origin/main` sigue bloqueado por conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. Preservado con `pending-boot-v10-main-20261108`; requiere decisión humana. Sin poda remota, prueba de navegador ni publicación.
 - [ ] BOOT v9: checkpoint/11 actualizado integrado; ramas remotas preservadas. Merge de `origin/main` abortado por conflictos en archivos `.md`; navegador y publicación pendientes de integración revisada.
 - [ ] BOOT v8: se integró el tip `origin/opencode-checkpoints/11` (`01f772a`); ramas remotas preservadas. Sincronización con `origin/main` pausada tras conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. Navegador y publicación pendientes de decisión humana.
 

@@ -1,5 +1,6 @@
 # CEMETERY
 
+- 2026-11-08: BOOT v10 integró `origin/opencode-checkpoints/11` (`664e952`) con merge `376c673`; tests 25/25. El merge de `origin/main` se abortó por conflictos en los cinco archivos de memoria y `HANDOFF.md` raíz; `pending-boot-v10-main-20261108` conserva el HEAD. No se resolvieron conflictos ni se borraron ramas remotas.
 - 2026-11-08: BOOT v9: se integró `origin/opencode-checkpoints/11` (`2aca086`); tests 25/25. El merge de `origin/main` se abortó por conflictos en cinco archivos `.md` de memoria y `HANDOFF.md` raíz. `pending-boot-v9-20261108` preserva el estado; no se borraron ramas remotas.
 
 - 2026-11-08: BOOT v8: se absorbió `origin/opencode-checkpoints/11` (`01f772a`) sin conflictos; `node --test` pasó 25/25. El merge de `origin/main` se abortó por conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. `pending-boot-v8-main-20261108` preserva el estado; no se borraron ramas remotas ni se publicó.

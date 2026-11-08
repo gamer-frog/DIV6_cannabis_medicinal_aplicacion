@@ -1,5 +1,6 @@
 # TODO / bloqueos
 
+- BOOT v10: `origin/opencode-checkpoints/11` (`664e952`) integrado; tests 25/25. El merge de `origin/main` se abortó por conflictos en cinco archivos `.md` de memoria y `HANDOFF.md` raíz; `pending-boot-v10-main-20261108` preserva el estado. Requiere revisión humana antes de resolver, verificar navegador o publicar. Ramas remotas preservadas.
 - BOOT v9: merge de `origin/main` abortado por conflictos en cinco archivos `.md` de memoria y `HANDOFF.md` raíz. `pending-boot-v9-20261108` preserva el estado; no borrar referencias remotas ni resolver automáticamente conforme al SOP vigente.
 - BOOT v8: integrar `origin/main` quedó bloqueado por conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. `pending-boot-v8-main-20261108` preserva el estado; no resolver automáticamente ni publicar desde este checkout hasta recibir decisión humana.
 - BOOT v7: el merge de `origin/main` se abortó por conflictos en cinco archivos de memoria y `HANDOFF.md` raíz. `pending-boot-v7-main-20261108` preserva el estado; no resolver automáticamente ni publicar desde este checkout.
