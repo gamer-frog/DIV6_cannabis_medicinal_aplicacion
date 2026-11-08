@@ -1,5 +1,11 @@
 # HANDOFF
 
+## Cierre — movimiento reducido (2026-11-08)
+- Hito «Preferencia de movimiento reducido» marcado como hecho en `roadmap.js`; el README refleja los conteos de estados del archivo: 63 hechos, 23 en curso, 70 próximos y 66 de visión.
+- Chromium confirmó `prefers-reduced-motion: reduce` en Verde y Bruma botánica: `scroll-behavior: auto`, transiciones de `1e-05s` y, en Bruma, animación de `1e-05s` con una iteración. Ambas páginas cargaron completas sin errores de consola ni de red.
+- Capturas inspeccionadas: `/tmp/opencode/reduced-motion-verde.jpg` y `/tmp/opencode/reduced-motion-bruma.jpg`. No hizo falta corregir CSS.
+- `node --test` pasó 25/25; `node --check oracle-core.js`, `node --check game.js` y `git diff --check` pasaron. No se publica: la rama ya tenía 8 commits previos sobre `origin/main` con metadatos de checkpoint fuera de alcance; este commit queda como el noveno local. `gh auth status` no encontró sesión autenticada. No publicar ese conjunto incidentalmente.
+
 ## Cierre — 2026-11-08
 - Pedido [A] terminado: “Bruma botánica”, mini-juego independiente enlazado desde Inicio, con tres rondas, marcador, cronómetro, reinicio, victoria y controles de teclado accesibles. Chromium desktop y móvil (390 px) verificados; capturas JPEG inspeccionadas: `/tmp/opencode/bruma-victoria.jpg` y `/tmp/opencode/bruma-movil.jpg`.
 - Hito H0 del Oráculo terminado: la búsqueda léxica usa límites de palabra, filtra recursos no relacionados y responde que no encontró recursos pertinentes cuando no hay coincidencias, sin adjuntar fuentes arbitrarias. El comportamiento no se presenta como medición de alucinaciones; una coincidencia léxica tampoco prueba que el recurso respalde la respuesta.
