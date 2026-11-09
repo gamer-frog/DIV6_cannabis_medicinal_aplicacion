@@ -2873,10 +2873,11 @@
   }
 
   function commandScore(entry, q) {
+    if (!entry || typeof entry !== 'object') return -1;
     if (!q) return 0;
-    const label = norm(entry.label);
+    const label = norm(entry.label || '');
     const meta = norm(entry.meta || '');
-    const hay = norm(`${entry.label} ${entry.meta || ''} ${entry.keywords || ''}`);
+    const hay = norm(`${entry.label || ''} ${entry.meta || ''} ${entry.keywords || ''}`);
     const words = q.split(/\s+/).filter(Boolean);
     if (!words.every(w => hay.includes(w))) return -1;
     let score = COMMAND_PRIORITY[entry.type] === 0 ? 4 : 0;
@@ -2892,7 +2893,7 @@
     const scored = commandEntries()
       .map((e, i) => ({ ...e, i, score: commandScore(e, q) }))
       .filter(e => e.score >= 0)
-      .sort((a, b) => b.score - a.score || COMMAND_PRIORITY[a.type] - COMMAND_PRIORITY[b.type] || a.i - b.i);
+      .sort((a, b) => b.score - a.score || (COMMAND_PRIORITY[a?.type] ?? Number.MAX_SAFE_INTEGER) - (COMMAND_PRIORITY[b?.type] ?? Number.MAX_SAFE_INTEGER) || a.i - b.i);
     const total = scored.length;
     commandVisible = scored.slice(0, 24);
     commandIndex = 0;
@@ -2900,8 +2901,8 @@
     if (!box) return;
     box.innerHTML = commandVisible.length ? commandVisible.map((e, i) => `
       <button class="cmd-row ${i === 0 ? 'active' : ''}" data-cmd-index="${i}" role="option" aria-selected="${i === 0}">
-        <span class="cmd-type cmd-type-${e.type}">${COMMAND_TYPE[e.type]}</span>
-        <span class="cmd-copy"><b>${esc(e.label)}</b><small>${esc(e.meta || '')}</small></span>
+        <span class="cmd-type cmd-type-${e?.type || 'unknown'}">${COMMAND_TYPE[e?.type] || 'OTRO'}</span>
+        <span class="cmd-copy"><b>${esc(e?.label || '')}</b><small>${esc(e?.meta || '')}</small></span>
         <span class="cmd-go" aria-hidden="true">↵</span>
       </button>`).join('') : `<div class="cmd-empty"><b>Sin resultados</b><span>Probá con “riego”, “floración”, “Gelato”, “roadmap” o “biblioteca”.</span></div>`;
     const count = $('#commandCount');

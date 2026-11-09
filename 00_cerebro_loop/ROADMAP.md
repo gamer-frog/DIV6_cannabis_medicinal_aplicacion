@@ -14,6 +14,7 @@
 - [x] Revisar accesos sensibles y no destructivos a archivos/estado; no se hicieron fusiones a ciegas.
 - [x] Eliminar ruido de verificación local y mantener la consola de navegador sin warnings de página.
 - [x] Revaluar la limpieza de ramas remotas: las checkpoint/2 y /7 son ancestros de `origin/main`; las demás examinadas conservan commits exclusivos. No hay evidencia verificable para fusionar o borrar las divergentes, que se preservan.
+- [x] Añadir guardias a la búsqueda global para omitir entradas nulas y tolerar etiquetas/tipos desconocidos; `node --test` 26/26 y verificación en navegador con `Gelato Auto` visible y 0 errores.
 
 ## 🐛 Bugs Conocidos
 - [ ] Ramas divergentes remotas: `checkpoints`/`resume` contienen commits exclusivos y no se confirmó su abandono; se mantienen preservadas por seguridad.
