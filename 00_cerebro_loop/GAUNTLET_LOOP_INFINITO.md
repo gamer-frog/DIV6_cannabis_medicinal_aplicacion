@@ -58,3 +58,14 @@ Este prompt se usa después del Prompt de Nacimiento, o cuando se proporciona un
 3. Ejemplo de instrucción inicial: "Agregá al roadmap: 1) Cambiar el color del botón de ataque a rojo. 2) Revisar que todos los NPCs tengan el guard `if (!current) return`. Empezá el loop."
 
 El flujo pretende descomponer pedidos en tareas atómicas, verificar cada una, registrar bloqueos con límite de tres intentos y publicar checkpoints. En este repositorio, esas acciones quedan sujetas al SOP vigente de `AGENTS.md`.
+
+## Por qué este sistema sirve para el trabajo sostenido
+
+1. **Mantenimiento proactivo:** la categoría [C] habilita tareas explícitas de mantenimiento y deuda técnica una vez atendidos los pedidos y el roadmap. Los ejemplos del prompt son ilustrativos: solo se convierten en trabajo si corresponden al repositorio real.
+2. **Memoria con funciones separadas:** `HANDOFF.md` deja el siguiente paso inmediato, `TODO.md` evita repetir indefinidamente intentos fallidos y `ROADMAP.md` organiza el trabajo pendiente del proyecto.
+3. **Ingesta ordenada:** las listas del usuario se descomponen en subtareas atómicas antes de ejecutarse, evitando concentrarlas en un mega-commit.
+4. **Control antes de publicar:** cada subtarea atraviesa análisis, ejecución, verificación en navegador y actualización de los registros antes de su checkpoint.
+
+## Cómo usarlo en la práctica
+
+Después del Prompt de Nacimiento, pegá este prompt y agregá al final la lista de cambios. Por ejemplo: «INSTRUCCIÓN INICIAL: Agregá al roadmap: 1) Cambiar el color del botón de ataque a rojo. 2) Revisar que todos los NPCs tengan el guard `if (!current) return`. Empezá el loop.» El ejemplo es solo una guía de formato; adaptá los cambios al producto real. El usuario puede indicar que se pause el loop.
