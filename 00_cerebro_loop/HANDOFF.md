@@ -1,5 +1,10 @@
 # HANDOFF
 
+## Cierre — recuperar PROTOCOL.md (2026-11-09)
+- Se creó `00_cerebro_loop/PROTOCOL.md` con el contenido exacto solicitado; los otros cinco archivos del cerebro ya existían y se preservaron.
+- Verificación aprobada: `node --test` (26/26), `node --check game.js`, `node --check bruma-botanica.js`, `git diff --check`; Chromium confirmó `document.readyState=complete`, `<main>` presente y título esperado, con consola y excepciones de página limpias.
+- No se modificó código funcional ni se eliminaron ramas remotas. Publicar solo tras confirmar fast-forward a `origin/main`.
+
 ## En pausa — 2026-11-08
 - Boot completado: `git fetch origin`, lectura de los cinco archivos del cerebro y baseline de navegador para Verde y Bruma con movimiento reducido; ambas rutas cargaron completas, con `scroll-behavior: auto`, animación/transición `1e-05s` y consola limpia. Tests iniciales: 25/25; sintaxis JS y `git diff --check` verdes.
 - Tarea [D] completada: agregada `tests/reduced-motion.test.js`, que exige la media query y las cuatro declaraciones de reducción de movimiento en las hojas de estilo de Verde y Bruma. Suite final: 26/26; ambas rutas verificadas nuevamente en Chromium, sin errores de consola/red y con movimiento reducido efectivo.
