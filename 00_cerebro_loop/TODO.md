@@ -1,6 +1,4 @@
-# TODO / bloqueos
+# TODO Y BLOQUEOS
+*Regla: Máximo 3 intentos por ítem. Si falla 3 veces, se marca "REQUIERE HUMANO" y se salta.*
 
-- Ramas remotas divergentes contienen commits de checkpoint/deployment/conversation y no se confirmó que sean huérfanas; no borrar ni fusionar por conjetura. Revaluar solo si aparece evidencia verificable de abandono y seguridad.
-- No publicar historial incidental del checkout original.
-- GitHub CLI no tiene sesión; el censo/forensis de issues y cualquier gestión remota quedan bloqueados. No reintentar sin credenciales.
-- No usar GitHub Issues ni `gh` CLI.
+- [ ] Intento 1/3: Revaluar la limpieza de `origin/opencode-checkpoints/*` y `origin/opencode-resume/*`. (Motivo del fallo: no hay evidencia verificada de que sean ramas huérfanas seguras para borrar.)

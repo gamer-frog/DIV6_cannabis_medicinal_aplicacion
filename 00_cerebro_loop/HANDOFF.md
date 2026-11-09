@@ -1,15 +1,5 @@
-# HANDOFF
-
-## Cierre — recuperar PROTOCOL.md (2026-11-09)
-- Se creó `00_cerebro_loop/PROTOCOL.md` con el contenido exacto solicitado; los otros cinco archivos del cerebro ya existían y se preservaron.
-- Verificación aprobada: `node --test` (26/26), `node --check game.js`, `node --check bruma-botanica.js`, `git diff --check`; Chromium confirmó `document.readyState=complete`, `<main>` presente y título esperado, con consola y excepciones de página limpias.
-- No se modificó código funcional ni se eliminaron ramas remotas. Publicar solo tras confirmar fast-forward a `origin/main`.
-
-## En pausa — 2026-11-08
-- Boot completado: `git fetch origin`, lectura de los cinco archivos del cerebro y baseline de navegador para Verde y Bruma con movimiento reducido; ambas rutas cargaron completas, con `scroll-behavior: auto`, animación/transición `1e-05s` y consola limpia. Tests iniciales: 25/25; sintaxis JS y `git diff --check` verdes.
-- Tarea [D] completada: agregada `tests/reduced-motion.test.js`, que exige la media query y las cuatro declaraciones de reducción de movimiento en las hojas de estilo de Verde y Bruma. Suite final: 26/26; ambas rutas verificadas nuevamente en Chromium, sin errores de consola/red y con movimiento reducido efectivo.
-- Checkpoint de código completado y publicado fast-forward: `6553bea` (`test(a11y): cover reduced-motion styles`), desde `2da7902` a `main`; la anotación del checkpoint quedó en `520f3a2`. La prueba y el cerebro están publicados; los archivos `.omgithub/` preexistentes siguen sin seguimiento y fuera de los commits.
-- Inicialización persistente del cerebro publicada en `c6c1b65`: los cinco archivos requeridos de `00_cerebro_loop/` ya están versionados.
-- Inspección remota: checkpoints/2, checkpoints/7 y `opencode/42374852214` son ancestros de `origin/main`; las demás ramas revisadas tienen commits divergentes de checkpoint/deployment/conversation. No se absorbió ni borró ninguna por falta de confirmación de abandono y seguridad.
-- Próximo paso: reevaluar la cola para una tarea de mantenimiento concreta; el roadmap actual no tiene subtareas abiertas y las ramas diferidas siguen sin evidencia segura para actuar.
-- Decisión: no usar `gh` ni interactuar con Issues. La solicitud general del loop permanece activa y no se marca como terminada.
+# HANDOFF (Estado Actual)
+- **Última acción completada:** Alineadas ROADMAP, TODO y HANDOFF con la estructura solicitada; corregida la cifra de tests a 26/26.
+- **Estado del build/navegador:** Verde. `node --test` pasó 26/26; `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check` pasaron. Chromium cargó Verde hasta completar el DOM, con título y `<main>` presentes; captura en `/tmp/opencode/templates-verify.png`. Chromium reportó advertencias de DBus/UPower del entorno; no se hizo una captura independiente de la consola web.
+- **Decisiones de diseño tomadas:** Mantener las secciones y casillas de estado pedidas, usar datos comprobables y no borrar ni fusionar ramas remotas divergentes sin evidencia verificable de que sea seguro.
+- **PRÓXIMO PASO INMEDIATO:** Mantener intactas las ramas `origin/opencode-checkpoints/*` y `origin/opencode-resume/*`; retomarlas solo si aparece evidencia verificable de que son huérfanas y seguras de borrar. Si no, seguir con una tarea de mantenimiento distinta.
