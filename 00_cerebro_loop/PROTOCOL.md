@@ -12,14 +12,14 @@
    - Si hay errores rojos → NO pushees
 
 4. **Si ves en consola: `TypeError: Cannot read properties of undefined (reading 'type')`**, DETENETE. Es un error de estado.
-   - Buscá en el código accesos a `.type` sin verificar
-   - Cambialos por `?.type` o `if (!obj) return`
-   - O revertí al último tag `save-NNN` que funcione: `git reset --hard save-XXX`
+   - Buscá en el código accesos a `.type` sin verificar y corregí la causa con una guardia apropiada.
+   - No uses `git reset --hard` ni descartes cambios locales sin autorización explícita y sin verificar antes que exista un respaldo recuperable.
 
-5. **PUSHEÁ A MAIN después de cada subtarea verificada en el navegador.**
-   - `git add . && git commit -m "tipo(área): descripción"`
-   - `git push origin HEAD:main` (Fast-forward)
-   - Hito visible → `git tag save-NNN && git push origin save-NNN`
+5. **Publicá solo después de revisar y aprobar el cambio completo.**
+   - Revisá cambios staged, unstaged, nuevos, eliminados y renombrados; incluí únicamente archivos del alcance aprobado, nunca `git add .` a ciegas.
+   - Verificá pruebas, navegador cuando corresponda, y que `HEAD` pueda actualizar `main` por fast-forward; no fuerces ni publiques cambios no revisados.
+   - Commiteá y pusheá solo cuando el alcance esté aprobado y la publicación sea segura; si hay dudas o bloqueos, preservá los cambios y registrá el siguiente paso en `HANDOFF.md`.
+   - Hitos visibles pueden etiquetarse como `save-NNN` cuando corresponda y con el mismo cuidado de revisión.
 
 6. **IGNORÁ POR COMPLETO `gh` (GitHub CLI).** Usá solo comandos `git`. No te detengas por errores de autenticación de `gh`.
 
@@ -31,10 +31,11 @@
 ## VERIFICACIÓN ANTES DE CADA PUSH
 
 Antes de hacer `git push origin HEAD:main`:
-1. Ejecutá la app en el navegador
-2. Abrí la consola del desarrollador
-3. Confirmá que NO hay errores rojos ni TypeErrors
-4. Solo entonces pusheá
+1. Revisá el diff completo y confirmá que su alcance está aprobado.
+2. Ejecutá la app en el navegador y revisá la consola para cambios de código.
+3. Ejecutá las pruebas y comprobaciones pertinentes; confirmá que no hay errores rojos ni TypeErrors.
+4. Confirmá que el push será fast-forward y que no sobrescribe trabajo remoto.
+5. Solo entonces publicá; si falla cualquiera de estas condiciones, detenete y preservá los cambios.
 
 ## GESTIÓN DE RAMAS ANTERIORES
 
@@ -44,9 +45,9 @@ Si existen branches `opencode-checkpoints/*` o `opencode-resume/*`:
 - Leé el código y entendé qué hace
 - Reconstruí los cambios de forma compatible en tu branch actual
 - Verificá en el navegador
-- Si funciona → pusheá a main
+- Si funciona, registrá el resultado y aplicá la regla 5 antes de cualquier publicación
 - Si NO funciona → documentalo en TODO.md y saltalo
-- Una vez a salvo el código valioso, limpiá el remoto: `git push origin --delete <nombre-rama>`
+- No borres ramas remotas por antigüedad o divergencia. Preservá las que tengan commits exclusivos o cuyo contenido/abandono no esté confirmado. La eliminación requiere comprobar que no queda trabajo único sin preservar y contar con autorización explícita.
 
 ## 📋 DICCIONARIO DE EMOJIS (COMUNICACIÓN OBLIGATORIA)
 

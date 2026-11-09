@@ -1,6 +1,6 @@
-# GAUNTLET LOOP INFINITO v1.0 — MOTOR DE DESARROLLO AUTÓNOMO
+# GAUNTLET LOOP INFINITO v2.0 — MOTOR SEGURO CON RESCATE DE TAREAS
 
-> Documento persistente del prompt reutilizable solicitado. Guardarlo no inicia el loop. En este repositorio, `AGENTS.md` sigue siendo la instrucción operativa vigente y prevalece ante cualquier diferencia con este prompt.
+> Documento persistente del prompt reutilizable solicitado. v2.0 amplía el ciclo v1.0 con lectura ordenada del Cerebro, rescate prudente y verificación de base. Guardarlo no inicia por sí solo un loop infinito. En este repositorio, `PROTOCOL.md` es la fuente operativa para Git y flujo de trabajo; prevalece ante cualquier diferencia con este prompt.
 
 ## Prompt
 
@@ -57,7 +57,7 @@ Este prompt se usa después del Prompt de Nacimiento, o cuando se proporciona un
 2. Para iniciar trabajo: pegar este prompt y agregar la lista de cambios al final.
 3. Ejemplo de instrucción inicial: "Agregá al roadmap: 1) Cambiar el color del botón de ataque a rojo. 2) Revisar que todos los NPCs tengan el guard `if (!current) return`. Empezá el loop."
 
-El flujo pretende descomponer pedidos en tareas atómicas, verificar cada una, registrar bloqueos con límite de tres intentos y publicar checkpoints. En este repositorio, esas acciones quedan sujetas al SOP vigente de `AGENTS.md`.
+El flujo pretende descomponer pedidos en tareas atómicas, verificar cada una, registrar bloqueos con límite de tres intentos y publicar checkpoints. En este repositorio, esas acciones quedan sujetas al SOP vigente de `PROTOCOL.md`.
 
 ## Por qué este sistema sirve para el trabajo sostenido
 
@@ -66,6 +66,17 @@ El flujo pretende descomponer pedidos en tareas atómicas, verificar cada una, r
 3. **Ingesta ordenada:** las listas del usuario se descomponen en subtareas atómicas antes de ejecutarse, evitando concentrarlas en un mega-commit.
 4. **Control antes de publicar:** cada subtarea atraviesa análisis, ejecución, verificación en navegador y actualización de los registros antes de su checkpoint.
 
+## Actualización v2.0 — rescate seguro y límites operativos
+
+Antes de elegir una tarea, leé en este orden `PROTOCOL.md`, `HANDOFF.md`, `ROADMAP.md`, `TODO.md`, `USER_REQUESTS.md` y `CEMETERY.md`. Si falta alguno, seguí el protocolo vigente para crearlo sin reemplazar datos reales por ejemplos.
+
+- Revisá ramas anteriores y sus `HANDOFF.md` para detectar trabajo incompleto. No hagas merges ciegos: inspeccioná commits y diffs, y reconstruí únicamente cambios entendidos y compatibles. Registrá tareas valiosas faltantes en `ROADMAP.md` y bloqueos que requieran intervención en `TODO.md`.
+- No borres ramas remotas solo por ser antiguas o divergentes. Preservalas si hay commits exclusivos o si su contenido/abandono no está confirmado; la limpieza requiere que el trabajo valioso esté a salvo y que el borrado sea seguro conforme a `PROTOCOL.md`.
+- Verificá la aplicación y la consola antes de trabajar y después de cada cambio de código. Si hay errores, priorizá corregirlos y no publiques mientras persistan. Para cambios solo documentales, ejecutá las comprobaciones pertinentes.
+- Elegí una sola tarea por ciclo: emergencia, pedido explícito del usuario, siguiente prioridad del roadmap, mantenimiento real del proyecto y, por último, optimización. No conviertas los ejemplos genéricos de mantenimiento en trabajo automático si no aplican.
+- Tras cada tarea, actualizá `HANDOFF.md` con resultado, verificaciones, decisiones y próximo paso. Marcá como completado únicamente lo efectivamente hecho.
+- Antes de publicar, revisá el diff completo y confirmá que el checkpoint es seguro y fast-forward. Nunca fuerces una publicación ni incluyas cambios ajenos sin revisarlos. No se debe prometer trabajo “infinito”: el agente debe parar ante bloqueos, riesgos, falta de autorización o instrucción del usuario.
+
 ## Cómo usarlo en la práctica
 
-Después del Prompt de Nacimiento, pegá este prompt y agregá al final la lista de cambios. Por ejemplo: «INSTRUCCIÓN INICIAL: Agregá al roadmap: 1) Cambiar el color del botón de ataque a rojo. 2) Revisar que todos los NPCs tengan el guard `if (!current) return`. Empezá el loop.» El ejemplo es solo una guía de formato; adaptá los cambios al producto real. El usuario puede indicar que se pause el loop.
+Después del Prompt de Nacimiento, pegá este prompt y agregá al final la lista de cambios o indicá que continúe con la siguiente tarea pendiente. Por ejemplo: «INSTRUCCIÓN INICIAL: Agregá al roadmap: 1) [pedido real del producto]. Empezá con una subtarea y verificá antes de continuar.» Los ejemplos genéricos de la v1 son solo guías de formato; adaptá el trabajo al producto real y respetá las restricciones registradas por el usuario. El usuario puede indicar que se pause el loop.
