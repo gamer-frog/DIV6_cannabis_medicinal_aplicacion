@@ -3,7 +3,7 @@
 ## Cierre — advertencia de Chromium (2026-11-09)
 - Base limpia: `HEAD` partió de `origin/main` (`607f219`); el tip divergente anterior quedó preservado como `pending-clean-slate-42542794514` antes del reset. Se agregó la meta estándar `mobile-web-app-capable` y se conservó la meta Apple existente.
 - Verificación aprobada: `node --test` (26/26), `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check`. Chromium cargó Verde desde el servidor local; el DOM incluye ambas metas y `<main>`, sin errores/avisos de consola de página ni recursos fallidos. Evidencia: `/tmp/opencode/origin-main-verified.png`, `.html` y `.log`.
-- La tarea quedó registrada en `00_cerebro_loop/ROADMAP.md`. Riesgos/bloqueos: GitHub CLI no tiene autenticación; las ramas checkpoint/resume con commits exclusivos permanecen preservadas, sin poda. La publicación a `main` está pendiente del intento fast-forward de este checkpoint.
+- La tarea quedó registrada en `00_cerebro_loop/ROADMAP.md`. El commit `81fee6c` y `save-001` se publicaron correctamente en fast-forward a `main`. Riesgos/bloqueos: GitHub CLI no tiene autenticación; las ramas checkpoint/resume con commits exclusivos permanecen preservadas, sin poda.
 - Siguiente: mantener intactas las ramas divergentes; gestionar issues solo después de disponer de autenticación.
 
 ## Cierre — movimiento reducido (2026-11-08)
