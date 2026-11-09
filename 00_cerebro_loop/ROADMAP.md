@@ -7,6 +7,7 @@
 - [x] Cobertura de movimiento reducido para Verde y Bruma: `node --test` pasa 26/26 y la verificación de ambas rutas en navegador está registrada.
 - [x] Corrección del warning de Chromium: meta `mobile-web-app-capable` aplicada y verificaciones Node/HTML confirmadas.
 - [x] Guardar el prompt reutilizable «GAUNTLET LOOP INFINITO v1.0» en `00_cerebro_loop/GAUNTLET_LOOP_INFINITO.md`, sin iniciar su loop de cambios de producto.
+- [x] Contrastar las plantillas solicitadas del Cerebro con los archivos existentes y documentar su formato en `PROTOCOL.md`, preservando el contenido real del proyecto.
 
 ## 🛠️ Deuda Técnica y Mantenimiento (Tareas [C])
 - [x] Sincronizar la rama de trabajo con `origin/main` por fast-forward y mantener el historial limpio de publicación.

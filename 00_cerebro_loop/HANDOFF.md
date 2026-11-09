@@ -1,5 +1,5 @@
 # HANDOFF (Estado Actual)
-- **Última acción completada:** Loop de mantenimiento cerrado. Se mantuvieron intactas las ramas remotas divergentes y no se tocaron issues sin intervención humana.
-- **Estado del build/navegador:** Verde. `node --test` 26/26; `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check` pasan. Chromium real: HTTP 200, `readyState=complete`, `<main>` presente, 0 errores/avisos de consola y 0 solicitudes fallidas. Captura: `/tmp/opencode/maintenance-verified.png`.
-- **Censo/decisiones:** 13 issues abiertos; los tres linajes más recientes (#11–#13) solo tienen comentarios automáticos de `github-actions[bot]`, ignorados según SOP. `gh` no tiene autenticación. Checkpoint/resume/deployment con commits únicos se preservan; checkpoint/2 y /7 son ancestros de `origin/main`.
-- **PRÓXIMO PASO INMEDIATO:** Commit atómico de esta documentación y push fast-forward a `main`, si se acepta. No forzar ni borrar ramas divergentes.
+- **Última acción completada:** Plantillas del Cerebro contrastadas con el pedido y formalizadas en `PROTOCOL.md`. `ROADMAP.md`, `TODO.md` y este `HANDOFF.md` ya seguían las estructuras; se preservaron sus datos reales. El Prompt del Gauntlet y su guía permanecen en `GAUNTLET_LOOP_INFINITO.md`.
+- **Estado del build/navegador:** Verde. `node --test` 26/26; `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check` pasan. Chromium: HTTP 200, `readyState=complete`, `<main>` presente, 0 errores/avisos de consola y 0 solicitudes fallidas.
+- **Decisiones de diseño tomadas:** No copiar placeholders como funcionalidades reales ni introducir `dist/game.js` que el proyecto no genera. Mantener el SOP de `AGENTS.md` como autoridad operativa y la guía de formatos en `PROTOCOL.md`.
+- **PRÓXIMO PASO INMEDIATO:** Crear el commit atómico y publicar solo por fast-forward a `main`; no forzar ni borrar ramas divergentes.
