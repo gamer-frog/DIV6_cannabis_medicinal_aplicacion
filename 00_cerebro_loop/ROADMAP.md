@@ -16,5 +16,8 @@
 - [x] Revaluar la limpieza de ramas remotas: las checkpoint/2 y /7 son ancestros de `origin/main`; las demás examinadas conservan commits exclusivos. No hay evidencia verificable para fusionar o borrar las divergentes, que se preservan.
 - [x] Añadir guardias a la búsqueda global para omitir entradas nulas y tolerar etiquetas/tipos desconocidos; `node --test` 26/26 y verificación en navegador con `Gelato Auto` visible y 0 errores.
 
+## 🎯 Restricciones de producto
+- No priorizar ni proponer nuevos juegos casuales aleatorios o desconectados del propósito de la aplicación (por ejemplo, “Bruma Botánica” o similares). Esta preferencia no autoriza eliminar ni alterar contenido o funciones existentes sin un pedido explícito.
+
 ## 🐛 Bugs Conocidos
 - [ ] Ramas divergentes remotas: `checkpoints`/`resume` contienen commits exclusivos y no se confirmó su abandono; se mantienen preservadas por seguridad.
