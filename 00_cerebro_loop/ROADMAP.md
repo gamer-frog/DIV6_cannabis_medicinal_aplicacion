@@ -6,6 +6,7 @@
 - [x] Verificación de la app en navegador antes del push: carga local limpia en Chromium con `<main>` presente y sin errores de consola.
 - [x] Cobertura de movimiento reducido para Verde y Bruma: `node --test` pasa 26/26 y la verificación de ambas rutas en navegador está registrada.
 - [x] Corrección del warning de Chromium: meta `mobile-web-app-capable` aplicada y verificaciones Node/HTML confirmadas.
+- [x] Guardar el prompt reutilizable «GAUNTLET LOOP INFINITO v1.0» en `00_cerebro_loop/GAUNTLET_LOOP_INFINITO.md`, sin iniciar su loop de cambios de producto.
 
 ## 🛠️ Deuda Técnica y Mantenimiento (Tareas [C])
 - [x] Sincronizar la rama de trabajo con `origin/main` por fast-forward y mantener el historial limpio de publicación.

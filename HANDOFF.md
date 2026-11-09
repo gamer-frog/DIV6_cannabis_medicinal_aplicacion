@@ -1,5 +1,11 @@
 # HANDOFF
 
+## Cierre — prompt Gauntlet persistido (2026-11-09)
+- Guardado el prompt completo «GAUNTLET LOOP INFINITO v1.0» y su guía de uso en `00_cerebro_loop/GAUNTLET_LOOP_INFINITO.md`. El pedido era documental: no se inició el loop de cambios de producto.
+- El documento aclara que `AGENTS.md` prevalece como SOP operativo en este repositorio. Las ramas remotas divergentes continúan preservadas.
+- Verificación aprobada: `node --test` (26/26), `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check`. Chromium (canal Chrome del sistema) cargó hasta `readyState=complete`, con `<main>` presente y consola en 0 errores/advertencias; captura inspeccionada en `/tmp/opencode/gauntlet-verify.png`.
+- Siguiente: crear commit atómico y publicar por fast-forward a `main`; dejar intactas las ramas divergentes.
+
 ## Cierre — advertencia de Chromium (2026-11-09)
 - Base limpia: `HEAD` partió de `origin/main` (`607f219`); el tip divergente anterior quedó preservado como `pending-clean-slate-42542794514` antes del reset. Se agregó la meta estándar `mobile-web-app-capable` y se conservó la meta Apple existente.
 - Verificación aprobada: `node --test` (26/26), `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check`. Chromium cargó Verde desde el servidor local; el DOM incluye ambas metas y `<main>`, sin errores/avisos de consola de página ni recursos fallidos. Evidencia: `/tmp/opencode/origin-main-verified.png`, `.html` y `.log`.
