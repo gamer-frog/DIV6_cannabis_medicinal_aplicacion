@@ -4,7 +4,7 @@
 - Se incorporó en `00_cerebro_loop/PROTOCOL.md` el contrato de formato para `ROADMAP.md`, `TODO.md`, `HANDOFF.md` y `GAUNTLET_LOOP_INFINITO.md`. Las tres plantillas existentes ya respetaban la estructura solicitada; se conservaron los datos propios del proyecto en lugar de sustituirlos por placeholders.
 - El pedido quedó registrado como completado en `00_cerebro_loop/USER_REQUESTS.md`. El prompt y la guía de Gauntlet se conservaron; no se inició trabajo de producto.
 - Verificación: `node --test` 26/26; `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check` pasan. Chromium: HTTP 200, `readyState=complete`, `<main>` presente, 0 errores/avisos de consola y 0 solicitudes fallidas.
-- Siguiente: crear commit atómico y publicar por fast-forward a `main`; preservar las ramas divergentes.
+- Checkpoint publicado por fast-forward: `7428b4a` en `main`. No quedan tareas de este pedido; preservar las ramas divergentes y continuar solo con la siguiente prioridad del SOP.
 
 ## Cierre — loop de mantenimiento (2026-11-09)
 - Censo público: 13 issues abiertos; se revisaron los linajes recientes #11–#13. Solo contienen comentarios de `github-actions[bot]`, por lo que se ignoraron sin cerrar ni modificar issues. `gh` no tiene autenticación.
