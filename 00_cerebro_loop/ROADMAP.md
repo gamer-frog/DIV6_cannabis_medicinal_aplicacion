@@ -12,7 +12,7 @@
 - [x] Sincronizar la rama de trabajo con `origin/main` por fast-forward y mantener el historial limpio de publicación.
 - [x] Revisar accesos sensibles y no destructivos a archivos/estado; no se hicieron fusiones a ciegas.
 - [x] Eliminar ruido de verificación local y mantener la consola de navegador sin warnings de página.
-- [ ] Revaluar la limpieza de las ramas remotas `origin/opencode-checkpoints/*` y `origin/opencode-resume/*` solo cuando haya evidencia verificable de que son huérfanas y seguras de borrar.
+- [x] Revaluar la limpieza de ramas remotas: las checkpoint/2 y /7 son ancestros de `origin/main`; las demás examinadas conservan commits exclusivos. No hay evidencia verificable para fusionar o borrar las divergentes, que se preservan.
 
 ## 🐛 Bugs Conocidos
 - [ ] Ramas divergentes remotas: `checkpoints`/`resume` contienen commits exclusivos y no se confirmó su abandono; se mantienen preservadas por seguridad.

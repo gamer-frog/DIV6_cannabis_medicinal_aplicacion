@@ -1,5 +1,11 @@
 # HANDOFF
 
+## Cierre — loop de mantenimiento (2026-11-09)
+- Censo público: 13 issues abiertos; se revisaron los linajes recientes #11–#13. Solo contienen comentarios de `github-actions[bot]`, por lo que se ignoraron sin cerrar ni modificar issues. `gh` no tiene autenticación.
+- Ramas: se preservan todas las checkpoint/resume/deployment con commits exclusivos (conteos de commits únicos entre 1 y 31); las checkpoint/2 y /7 ya son ancestros de `origin/main`. No hay autorización verificable para fusionar o borrar las divergentes.
+- Verificación: `node --test` 26/26, `node --check game.js`, `node --check bruma-botanica.js` y `git diff --check` pasaron. Chromium real cargó `index.html` con HTTP 200, `readyState=complete`, `<main>` presente, sin errores/avisos de consola ni solicitudes fallidas. Captura inspeccionada: `/tmp/opencode/maintenance-verified.png`.
+- `HEAD` y `origin/main` siguen alineados en `bc319cb`; los cambios de documentación se registran en checkpoint atómico. Publicar solo por fast-forward; no borrar ramas divergentes.
+
 ## Cierre — prompt Gauntlet persistido (2026-11-09)
 - Guardado el prompt completo «GAUNTLET LOOP INFINITO v1.0» y su guía de uso en `00_cerebro_loop/GAUNTLET_LOOP_INFINITO.md`. El pedido era documental: no se inició el loop de cambios de producto.
 - El documento aclara que `AGENTS.md` prevalece como SOP operativo en este repositorio. Las ramas remotas divergentes continúan preservadas.
