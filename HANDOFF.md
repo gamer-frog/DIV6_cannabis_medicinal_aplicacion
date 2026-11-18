@@ -5,7 +5,7 @@
 - El service worker pasó a estrategia red-primero para navegación, con respaldo en caché para uso offline; la versión de caché es `verde-v5.1` y los assets usan `?v=46`.
 - `PROTOCOL.md` ahora documenta la autorización permanente para verificar, commitear y pushear a `main` de forma autónoma, sin `--force` ni `reset --hard`; `TODO.md` tiene la cola de trabajo y `HANDOFF.md` el estado vigente.
 - Verificación: `node --test` 29/29, `node --check` y `git diff --check` OK; Chromium en 390×844, 320×640, 768×1024 y 1440×900 sin desborde horizontal, búsqueda móvil funcional y 0 errores/avisos de consola.
-- Publicado por fast-forward en `main` en este ciclo; commit del pase móvil `9c2a17c`.
+- Publicado por fast-forward en `main` en este ciclo: `8fd6828..b9d19a0`; commit del pase móvil `9c2a17c`.
 
 ## Cierre — plantillas del Cerebro (2026-11-09)
 - Se incorporó en `00_cerebro_loop/PROTOCOL.md` el contrato de formato para `ROADMAP.md`, `TODO.md`, `HANDOFF.md` y `GAUNTLET_LOOP_INFINITO.md`. Las tres plantillas existentes ya respetaban la estructura solicitada; se conservaron los datos propios del proyecto en lugar de sustituirlos por placeholders.
