@@ -414,16 +414,28 @@
 
   /* ---------- navigation ---------- */
   const VIEWS = { panel: 'INICIO', strains: 'CEPAS', journal: 'DIARIO', sim: 'SIMULADOR', library: 'BIBLIOTECA', oracle: 'ORÁCULO IA', budget: 'COSTOS', process: 'PROCESO', roadmap: 'ROADMAP' };
+  function openMoreSheet() {
+    $('#moreSheet')?.classList.add('open');
+    $('#sheetBackdrop')?.classList.add('open');
+    $('#moreBtn')?.setAttribute('aria-expanded', 'true');
+  }
+  function closeMoreSheet() {
+    $('#moreSheet')?.classList.remove('open');
+    $('#sheetBackdrop')?.classList.remove('open');
+    $('#moreBtn')?.setAttribute('aria-expanded', 'false');
+  }
   function navigate(target, opts = {}) {
     if (target === 'journal') { target = 'panel'; showToast('Diario fuera de la app de estudio (ver Roadmap).'); }
     if (!VIEWS[target]) target = 'panel';
     app.view = target;
     $('#resourceDetail').classList.remove('mobile-open');
     document.body.classList.remove('detail-open');
-    $('#moreSheet').classList.remove('open');
+    closeMoreSheet();
     $$('.view').forEach(v => v.classList.toggle('active', v.id === `view-${target}`));
     $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === target));
     $$('.mobile-nav button[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === target));
+    const directMobileTab = ['panel', 'strains', 'sim', 'library'].includes(target);
+    $('#moreBtn')?.classList.toggle('active', !directMobileTab);
     $('#crumbCurrent').textContent = VIEWS[target];
     if (opts.journalWeek) app.journalWeek = opts.journalWeek;
     if (target === 'library') {
@@ -2932,7 +2944,7 @@
     if (!modal) return;
     modal.classList.add('open');
     const input = $('#commandInput');
-    if (input) { input.value = ''; setTimeout(() => input.focus(), 60); }
+    if (input) { input.value = ''; setTimeout(() => input.focus({ preventScroll: true }), 60); }
     renderCommandResults();
   }
 
@@ -2966,6 +2978,11 @@
     $('#backupImportBtn')?.addEventListener('click', () => $('#backupFileInput')?.click());
     $('#backupFileInput')?.addEventListener('change', event => importBackup(event.target.files?.[0]));
     $('#globalSearchBtn')?.addEventListener('click', openCommandPalette);
+    $('#mobileSearchBtn')?.addEventListener('click', openCommandPalette);
+    $('#sheetSearchBtn')?.addEventListener('click', () => { closeMoreSheet(); openCommandPalette(); });
+    $('#sheetGuideBtn')?.addEventListener('click', () => { closeMoreSheet(); $('#guideModal')?.classList.add('open'); });
+    $('#sheetBackupBtn')?.addEventListener('click', () => { closeMoreSheet(); $('#backupModal')?.classList.add('open'); });
+    $('#sheetBackdrop')?.addEventListener('click', closeMoreSheet);
     $('#commandInput')?.addEventListener('input', renderCommandResults);
     $('#commandInput')?.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown') { e.preventDefault(); commandSetActive(commandIndex + 1); }
@@ -2980,7 +2997,7 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         $$('.modal-backdrop.open').forEach(b => b.classList.remove('open'));
-        $('#moreSheet')?.classList.remove('open');
+        closeMoreSheet();
       }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
@@ -3091,8 +3108,8 @@
       $('#soundBtn').setAttribute('aria-label', on ? 'Desactivar sonido' : 'Activar sonido');
       showToast(on ? 'Sonido ambiente activado (demo).' : 'Sonido ambiente desactivado.');
     });
-    $('#moreBtn')?.addEventListener('click', () => $('#moreSheet').classList.add('open'));
-    $('#closeMore')?.addEventListener('click', () => $('#moreSheet').classList.remove('open'));
+    $('#moreBtn')?.addEventListener('click', openMoreSheet);
+    $('#closeMore')?.addEventListener('click', closeMoreSheet);
     $('#exportJournalBtn')?.addEventListener('click', exportJournal);
     $('#askStrainBtn')?.addEventListener('click', () => navigate('oracle', { question: '¿Qué autofloreciente conviene para empezar y qué cuidados necesita?' }));
   }
