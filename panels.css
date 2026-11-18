@@ -65,8 +65,9 @@
 .rd-path b{display:block;color:#a2ab93;font-weight:500;margin-bottom:3px;font-size:6.5px;letter-spacing:.08em}
 .rd-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:13px}
 .rd-tags span{font:400 7px var(--mono);color:#99a289;background:rgba(235,241,214,.05);padding:3px 6px;border-radius:4px}
-.rd-actions{display:flex;gap:6px}
-.rd-actions .btn{height:34px;font-size:9px;flex:1;padding:0 8px;gap:6px}
+.rd-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rd-actions .btn{height:38px;font-size:9px;width:100%;justify-content:center;padding:0 8px;gap:6px}
+.rd-actions .btn:first-child{grid-column:1/-1}
 .rd-dup{background:rgba(216,242,107,.04);border:1px solid rgba(216,242,107,.14);border-radius:8px;padding:9px 10px;margin-bottom:11px}
 .rd-dup b{font:600 8.5px var(--sans);color:#bdcd93;display:block;margin-bottom:3px}
 .rd-dup p{font:400 7.5px/1.55 var(--mono);color:#8a937c;margin:0}
