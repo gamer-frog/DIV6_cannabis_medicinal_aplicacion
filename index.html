@@ -10,12 +10,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=45" />
-  <link rel="stylesheet" href="views.css?v=45" />
-  <link rel="stylesheet" href="panels.css?v=45" />
-  <link rel="stylesheet" href="verde-v3.css?v=45" />
+  <link rel="stylesheet" href="styles.css?v=46" />
+  <link rel="stylesheet" href="views.css?v=46" />
+  <link rel="stylesheet" href="panels.css?v=46" />
+  <link rel="stylesheet" href="verde-v3.css?v=46" />
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Verde" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </head>
@@ -71,6 +72,7 @@
         </div>
         <div class="topbar-actions">
           <button class="search-pill" id="globalSearchBtn" type="button" aria-label="Buscar en toda la app"><span>⌕</span> Buscar cepas, temas, fuentes <kbd>⌘K</kbd></button>
+          <button class="icon-btn mobile-search-btn" id="mobileSearchBtn" type="button" aria-label="Buscar en toda la app" title="Buscar"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="8.8" cy="8.8" r="5.4"/><path d="m12.9 12.9 4.1 4.1"/></svg></button>
           <span class="legal-pill"><span class="live-dot"></span>ARGENTINA · 2026</span>
           <button class="icon-btn" id="guideBtn" aria-label="Guía rápida" title="Guía rápida">?</button>
           <button class="icon-btn" id="soundBtn" aria-label="Activar sonido" title="Sonido">◖</button>
@@ -687,19 +689,23 @@
     <button class="active" data-nav="panel"><span>◐</span>Inicio</button>
     <button data-nav="strains"><span>❧</span>Cepas</button>
     <button data-nav="sim"><span>✳</span>Cultivo</button>
-    <button data-nav="library"><span>▦</span>Biblio</button>
-    <button id="moreBtn"><span>⋯</span>Más</button>
+    <button data-nav="library"><span>▦</span>Biblioteca</button>
+    <button id="moreBtn" aria-controls="moreSheet" aria-expanded="false"><span>⋯</span>Más</button>
   </nav>
 
-  <div class="mobile-sheet" id="moreSheet">
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="mobile-sheet" id="moreSheet" role="dialog" aria-modal="true" aria-label="Más herramientas">
     <div class="sheet-grip"></div>
     <div class="sheet-head"><span class="section-kicker">MÁS HERRAMIENTAS</span><button id="closeMore" aria-label="Cerrar">×</button></div>
+    <button class="sheet-search" id="sheetSearchBtn" type="button"><span aria-hidden="true">⌕</span><b>Buscar en toda la app</b><small>⌘K</small></button>
     <div class="sheet-grid">
       <button data-nav="library"><span>▦</span><b>Biblioteca</b><small>28 recursos</small></button>
       <button data-nav="oracle"><span>◈</span><b>Oráculo</b><small>Con fuentes</small></button>
       <button data-nav="budget"><span>◫</span><b>Costos</b><small>ARS 2026</small></button>
       <button data-nav="process"><span>◷</span><b>Proceso</b><small>75 días</small></button>
       <button data-nav="roadmap"><span>◇</span><b>Roadmap</b><small>El camino</small></button>
+      <button id="sheetGuideBtn" type="button"><span>?</span><b>Guía rápida</b><small>Cómo funciona</small></button>
+      <button id="sheetBackupBtn" type="button"><span>↕</span><b>Respaldo</b><small>Datos locales</small></button>
     </div>
     <div class="sheet-legal"><span class="live-dot"></span>Autocultivo registrado · 15 m² · 9 plantas · Argentina 2026</div>
   </div>
@@ -739,9 +745,9 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="library.js?v=45"></script>
-  <script src="strains.js?v=45"></script>
-  <script src="roadmap.js?v=45"></script>
+  <script src="library.js?v=46"></script>
+  <script src="strains.js?v=46"></script>
+  <script src="roadmap.js?v=46"></script>
   <script src="simulator-core.js?v=1"></script>
   <script src="scenario-core.js?v=1"></script>
   <script src="backup-core.js?v=1"></script>
